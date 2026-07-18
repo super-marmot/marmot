@@ -63,7 +63,7 @@ export default function ChatListScreen() {
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: 120 }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>Marmot</Text>
+            <Text style={styles.emptyTitle}>No chats yet</Text>
             <Text style={styles.emptyText}>
               Private AI chat that runs entirely on your phone. No account, no
               cloud, works in airplane mode.
@@ -128,7 +128,7 @@ const getStyles = themedStyles((colors: Palette) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.bg },
     empty: { alignItems: 'center', paddingTop: 80, gap: spacing.md },
-    emptyTitle: { color: colors.text, fontSize: 32, fontWeight: '700' },
+    emptyTitle: { color: colors.text, fontSize: 22, fontWeight: '700' },
     emptyText: {
       color: colors.textDim,
       fontSize: 15,

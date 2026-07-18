@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -234,23 +235,29 @@ export default function ChatScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? headerHeight : 0}
     >
       {/* model picker strip */}
-      <View style={styles.modelStrip}>
-        {CATALOG.filter((m) => downloadedIds.includes(m.id)).map((m) => {
-          const active = chat.modelId === m.id
-          return (
-            <Pressable
-              key={m.id}
-              disabled={phase !== 'idle'}
-              hitSlop={6}
-              style={[styles.modelChip, active && styles.modelChipActive]}
-              onPress={() => persist({ ...chat, modelId: m.id })}
-            >
-              <Text style={[styles.modelChipText, active && styles.modelChipTextActive]}>
-                {m.name}
-              </Text>
-            </Pressable>
-          )
-        })}
+      <View style={styles.modelStripWrap}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.modelStrip}
+        >
+          {CATALOG.filter((m) => downloadedIds.includes(m.id)).map((m) => {
+            const active = chat.modelId === m.id
+            return (
+              <Pressable
+                key={m.id}
+                disabled={phase !== 'idle'}
+                hitSlop={6}
+                style={[styles.modelChip, active && styles.modelChipActive]}
+                onPress={() => persist({ ...chat, modelId: m.id })}
+              >
+                <Text style={[styles.modelChipText, active && styles.modelChipTextActive]}>
+                  {m.name}
+                </Text>
+              </Pressable>
+            )
+          })}
+        </ScrollView>
       </View>
 
       <FlatList
@@ -260,6 +267,15 @@ export default function ChatScreen() {
         contentContainerStyle={{ padding: spacing.lg, gap: spacing.md }}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
         renderItem={({ item }) => <Bubble message={item} />}
+        ListEmptyComponent={
+          phase === 'idle' ? (
+            <View style={styles.chatEmpty}>
+              <Text style={styles.chatEmptyText}>
+                Ask anything — everything runs on your phone.
+              </Text>
+            </View>
+          ) : null
+        }
         ListFooterComponent={
           <>
             {phase === 'loading-model' && (
@@ -352,15 +368,18 @@ const getStyles = themedStyles((colors: Palette) =>
     borderRadius: radius.pill,
   },
   primaryBtnText: { color: colors.accentText, fontWeight: '700', fontSize: 16 },
-  modelStrip: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+  modelStripWrap: {
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  modelStrip: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  chatEmpty: { alignItems: 'center', paddingTop: 120, paddingHorizontal: spacing.xl },
+  chatEmptyText: { color: colors.textFaint, fontSize: 14, textAlign: 'center' },
   modelChip: {
     paddingHorizontal: spacing.md,
     paddingVertical: 6,

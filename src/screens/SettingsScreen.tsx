@@ -131,6 +131,10 @@ export default function SettingsScreen() {
         placeholderTextColor={colors.textFaint}
       />
 
+      <Pressable style={styles.resetBtn} onPress={() => update(DEFAULT_SETTINGS)}>
+        <Text style={styles.resetText}>Reset to defaults</Text>
+      </Pressable>
+
       <Text style={styles.rowLabel}>Your data</Text>
       <Text style={styles.rowHint}>
         Backs up every conversation as a JSON file via the share sheet — save
@@ -148,10 +152,6 @@ export default function SettingsScreen() {
         }}
       >
         <Text style={styles.exportText}>Export all chats</Text>
-      </Pressable>
-
-      <Pressable style={styles.resetBtn} onPress={() => update(DEFAULT_SETTINGS)}>
-        <Text style={styles.resetText}>Reset to defaults</Text>
       </Pressable>
     </ScrollView>
   )
@@ -262,10 +262,10 @@ const getStyles = themedStyles((colors: Palette) =>
     borderRadius: radius.md,
     alignItems: 'center',
     padding: spacing.md,
-    marginBottom: spacing.xl,
+    marginBottom: 40,
   },
   exportText: { color: colors.accent, fontSize: 15, fontWeight: '600' },
-  resetBtn: { alignItems: 'center', padding: spacing.md, marginBottom: 40 },
+  resetBtn: { alignItems: 'center', padding: spacing.md, marginBottom: spacing.xl },
   resetText: { color: colors.red, fontSize: 14, fontWeight: '600' },
 })
 )

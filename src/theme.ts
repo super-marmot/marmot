@@ -34,20 +34,22 @@ export const darkColors: Palette = {
   assistantBubble: '#161B22',
 }
 
+// Light mode is deliberately monochrome (OpenAI-style): white surfaces,
+// near-black text, black primary actions — color only for status/danger.
 export const lightColors: Palette = {
-  bg: '#F6F8FA',
+  bg: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceAlt: '#EAEEF2',
-  border: '#D0D7DE',
-  text: '#1F2328',
-  textDim: '#57606A',
-  textFaint: '#8C959F',
-  accent: '#9A6700',
+  surfaceAlt: '#F4F4F4',
+  border: '#E3E3E3',
+  text: '#0D0D0D',
+  textDim: '#5D5D5D',
+  textFaint: '#9A9A9A',
+  accent: '#0D0D0D',
   accentText: '#FFFFFF',
-  green: '#1A7F37',
-  yellow: '#9A6700',
-  red: '#CF222E',
-  userBubble: '#DCE5EF',
+  green: '#0E8345',
+  yellow: '#B26A00',
+  red: '#D92D20',
+  userBubble: '#F2F2F2',
   assistantBubble: '#FFFFFF',
 }
 
