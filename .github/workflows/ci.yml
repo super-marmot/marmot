@@ -17,6 +17,11 @@ jobs:
           node-version: 22
           cache: npm
 
+      # the lockfile is written by npm 11 — match it (node 22 bundles npm 10,
+      # which reads the same lock more strictly and fails resolution)
+      - name: Pin npm 11
+        run: npm install -g npm@11
+
       # --ignore-scripts: llama.rn's postinstall downloads ~100 MB of native
       # artifacts needed only for device builds — jest, tsc, and the Metro
       # bundle don't touch them, and skipping keeps CI fast and offline-safe.
