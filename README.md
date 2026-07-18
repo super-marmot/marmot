@@ -35,73 +35,67 @@ actual memory so you know before downloading whether it will run comfortably.
 
 ## Screens
 
-| Home | Chat | Agent mode |
-| :---: | :---: | :---: |
-| <img src="docs/assets/screen-chats.svg" width="220" alt="Conversation list" /> | <img src="docs/assets/screen-chat.svg" width="220" alt="Streaming chat" /> | <img src="docs/assets/screen-agent.svg" width="220" alt="Agent mode with tool-call timeline" /> |
-
-| Voice mode | | |
-| :---: | :---: | :---: |
-| <img src="docs/assets/screen-voice.svg" width="220" alt="Live voice conversation mode" /> | | |
-
-| Model library | Memory | Export | Settings (light) |
+| Home | Chat | Agent mode | Voice mode |
 | :---: | :---: | :---: | :---: |
-| <img src="docs/assets/screen-models.svg" width="170" alt="Model library with downloads" /> | <img src="docs/assets/screen-memory.svg" width="170" alt="Agent memory: view, add, delete" /> | <img src="docs/assets/screen-export.svg" width="170" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="170" alt="Settings in light mode with appearance toggle" /> |
+| <img src="docs/assets/screen-chats.svg" width="190" alt="Conversation list" /> | <img src="docs/assets/screen-chat.svg" width="190" alt="Streaming chat" /> | <img src="docs/assets/screen-agent.svg" width="190" alt="Agent mode with tool-call timeline" /> | <img src="docs/assets/screen-voice.svg" width="190" alt="Live voice conversation mode" /> |
+
+| Model library | Memory & RAG | Export | Settings (light) |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/assets/screen-models.svg" width="190" alt="Model library with downloads" /> | <img src="docs/assets/screen-memory.svg" width="190" alt="Agent memory: view, add, delete" /> | <img src="docs/assets/screen-export.svg" width="190" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="190" alt="Settings in light mode with appearance toggle" /> |
 
 ## Features
 
-- 🔒 **Fully private** — the only network traffic is the one-time model
-  download from Hugging Face. Chats never leave the device.
-- ⚡ **Streaming responses** with per-reply tokens/sec stats, rendered as
-  markdown (bold, lists, code blocks, links) in assistant bubbles.
-- 📦 **Resumable downloads** that continue in the background (iOS background
-  session) and survive app restarts — pause, resume, cancel, delete. A
-  `.gguf` on disk is always complete (downloads write to a `.part` file and
-  move atomically).
-- 🧠 **RAM-fit badges** — "Runs great / Should run / May be too big" based on
-  your device's total memory vs. model size.
-- 🤔 **Reasoning-model aware** — Qwen3.5 and SmolLM3's `<think>…</think>`
-  blocks are folded into a "Thinking…" indicator instead of leaking raw tags
-  into the chat.
-- 🎛️ **Tunable sampling** — temperature, top-p, max tokens, context length
-  (2k/4k/8k), and a custom system prompt.
-- 🎭 **Personas** — five built-in personalities (Concise, Coach, Writer,
-  Tutor, Developer) plus save-your-own; the active persona shapes both plain
-  chat and the agent's final answers.
-- 🎙️ **Voice mode** — live spoken conversations (listen → think → speak,
-  hands-free loop) and a meeting mode that transcribes the room, saves the
-  transcript into agent-searchable documents, and offers "Marmot, …"
-  wake-phrase contributions as tap-to-speak suggestion cards.
-- 🌐 **Web research (opt-in)** — an "Allow web access" switch gives the agent
-  `web_search` and `fetch_page` tools with cited sources; off means the app
-  is provably offline. Full capability designs (git repos, file organization,
-  whisper-class ASR) live in [docs/CAPABILITIES.md](docs/CAPABILITIES.md).
-- 🌗 **Light & dark mode** — dark by default, with light and follow-system
-  options in Settings.
-- 🤖 **Agent Mode** — flip the ⚙ Agent chip and the model works step-by-step
-  with local tools (calculator, clock, chat search), showing a live
-  thought/tool/observation timeline. Multi-step tasks are orchestrated:
-  a planner decomposes the task, each step runs in a fresh executor with
-  its own budget, steps check off live, and a synthesizer (plus optional
-  judge gate) produces the final answer. Policy-bounded, fully on-device,
-  unit-tested core ([docs/AGENT.md](docs/AGENT.md)).
-- ⚖️ **Verified answers (optional)** — a Settings toggle runs a
-  reflection pass (which may revise the answer) plus an independent judge
-  pass after each agent reply, stamping a ✓/⚠ score badge on the message.
-- 🧠 **Memory** — the agent remembers facts about you and your projects
-  (viewable and editable in Settings → Memory) and auto-captures one-line
-  summaries of past exchanges. Recall is semantic: memories are matched by
-  meaning using on-device embeddings from the loaded model, with keyword
-  fallback when no model is running.
-- 📚 **Document RAG** — import text/markdown files or an entire public
-  GitHub repo (`owner/repo`) into searchable passages; the agent grounds
-  answers in them with its `search_documents` tool — "chat with the repo,"
-  fully on-device after the download.
-- 📤 **Export, import & share** — share a chat as Markdown or back up
-  everything as JSON through the native share sheet (Google Drive, OneDrive,
-  Files, email — no cloud SDKs, no OAuth, Marmot never holds a credential),
-  and restore backups with a merge that never overwrites newer local chats.
-- 🪶 **Lightweight** — ~2 MB JS bundle, no backend, one model in memory at a
-  time (switching models releases the previous context first).
+**Chat**
+
+- ⚡ **Streaming replies** with tok/s stats, rendered as markdown (bold,
+  lists, code blocks, tappable links) in assistant bubbles.
+- 🤔 **Reasoning-model aware** — `<think>…</think>` blocks fold into a
+  "Thinking…" indicator instead of leaking raw tags.
+- 🎭 **Personas** — five built-ins (Concise, Coach, Writer, Tutor, Developer)
+  plus save-your-own; the active persona shapes chat and agent answers alike.
+- 🎛️ **Tunable sampling** — temperature, top-p, max tokens, context length,
+  system prompt; 🌗 dark, light, and follow-system themes.
+
+**Agent**
+
+- 🤖 **Agent Mode** — flip the ⚙ chip and the model works step-by-step with
+  local tools (calculator, clock, chat search, document search), showing a
+  live thought/tool/observation timeline. Multi-step tasks are orchestrated:
+  a planner decomposes, fresh-context executors run each step, live ☑
+  check-offs, then a synthesizer produces the answer
+  ([docs/AGENT.md](docs/AGENT.md)).
+- ⚖️ **Verified answers (optional)** — a reflection pass may revise, an
+  independent judge scores; the verdict badge persists on the message.
+- 🧠 **Memory** — user/project facts (editable in Settings → Memory) plus
+  auto-captured episode summaries, recalled *by meaning* with on-device
+  embeddings and injected into agent runs.
+- 📚 **Document & repo RAG** — import text/markdown files or a public GitHub
+  repo (`owner/repo`) and chat with them via semantic search, fully
+  on-device.
+- 🌐 **Web research (opt-in)** — `web_search` + `fetch_page` tools with cited
+  sources; with the switch off, Marmot is provably offline.
+
+**Voice**
+
+- 🎙️ **Conversation mode** — a hands-free listen → think → speak loop with
+  an animated, phase-aware voice stage.
+- 📝 **Meeting mode** — continuous transcription with a recording timer;
+  say "Marmot, …" for a suggested contribution (tap-to-speak card — it never
+  talks into the room uninvited); transcripts save into searchable documents.
+
+**Models & data**
+
+- 📦 **Resumable downloads** that continue in the background and survive
+  restarts; a `.gguf` on disk is always complete (atomic `.part` moves).
+- 📱 **RAM-fit badges** ("Runs great / Should run / May be too big") from
+  your device's actual memory; import any local `.gguf` as a first-class
+  model; experimental Android GPU toggle.
+- 📤 **Export, import & share** — Markdown chat sharing and JSON backups via
+  the OS share sheet (Drive, OneDrive, Files — no cloud SDKs, no OAuth);
+  restores merge without ever overwriting newer local history.
+- 🔒 **Private by architecture** — no account, no backend, no telemetry;
+  ~2 MB JS bundle; one model in memory at a time. Capability designs for
+  what's next live in [docs/CAPABILITIES.md](docs/CAPABILITIES.md).
 
 ## Model catalog
 
@@ -128,7 +122,7 @@ Marmot uses native modules, so it needs a development build (not Expo Go).
 **Prerequisites:** Node 20+, and Android Studio (Android) or Xcode on macOS (iOS).
 
 ```bash
-git clone https://github.com/meowju/marmot.git
+git clone https://github.com/stancsz/marmot.git
 cd marmot
 npm install
 
@@ -147,22 +141,23 @@ npx expo run:ios       # iOS (macOS only)
 
 ```
 src/
-  models/catalog.ts      # curated model list (id, URL, exact size, license)
+  models/catalog.ts       # curated model list (id, URL, exact size, license)
+  agent/                  # pure-TS agent core — fully unit-tested
+    loop.ts               #   Observe→Decide→Act→Verify + JSON tool protocol
+    orchestrator.ts       #   per-step subagent executors + judge gate
+    planner.ts  skills.ts #   task decomposition; trigger→procedure registry
+    memory.ts  documents.ts  semantic.ts   # memory + RAG, cosine retrieval
+    tools.ts  web.ts      #   calculator/clock/search + opt-in web tools
+    reflection.ts  verify.ts               # self-critique + judge scoring
   lib/
-    engine.ts            # single global llama.cpp context; load/unload/stream
-    downloads.ts         # resumable downloads → .part file → atomic move
-    chatStore.ts         # AsyncStorage persistence for chats + settings
-    exportShare.ts       # Markdown/JSON export via the OS share sheet
-  agent/                 # pure-TS agent core (loop, tools, planner, memory,
-                         # skills, policies, reflection, judge) — unit-tested,
-                         # UI wiring in progress; see docs/AGENT.md
-    deviceMemory.ts      # RAM-fit heuristic (total RAM vs model size)
-    thinking.ts          # <think>…</think> splitter for reasoning models
-  screens/
-    ChatListScreen.tsx   # home: conversation history
-    ChatScreen.tsx       # streaming chat + model picker strip
-    ModelsScreen.tsx     # library: download/pause/resume/delete + fit badges
-    SettingsScreen.tsx   # sampling params, context length, system prompt
+    engine.ts             # llama.cpp context lifecycle, embeddings, GPU opts
+    agentRuntime.ts       # wires the agent core to the engine + stores
+    downloads.ts          # resumable background downloads, atomic moves
+    chatStore.ts  importParse.ts  exportShare.ts   # persistence + backup
+    customModels.ts  repoCore.ts  repoImport.ts    # .gguf + GitHub imports
+    voiceSession.ts       # voice-mode state machine (tested)
+    markdown.ts  personas… thinking…  deviceMemory…
+  screens/                # ChatList, Chat, Models, Memory, Voice, Settings
 ```
 
 **Stack:** React Native (Expo SDK 57) · [llama.rn](https://github.com/mybigday/llama.rn) · TypeScript.
@@ -187,20 +182,18 @@ One entry in [`src/models/catalog.ts`](src/models/catalog.ts):
 ```
 
 Catalog PRs are welcome, with two constraints: the model must run acceptably
-on a mid-range phone (≤ ~2.5 GB quantized), and the size must be the exact
-byte count of the hosted file — the download manager and RAM-fit badges
-depend on it.
+on a phone (≤ ~4 GB quantized), and the size must be the exact byte count of
+the hosted file — the download manager and RAM-fit badges depend on it.
 
-## Roadmap
+## What's next
 
-- [x] Markdown rendering in chat bubbles
-- [x] Import chats back from a JSON export
-- [x] Import any local `.gguf` from the Files app
-- [x] Background downloads
-- [x] Android GPU (OpenCL) inference — shipped as an experimental opt-in
-  toggle in Settings (off by default pending device benchmarks)
-- [x] Prompt templates / saved personas
-- [x] Basic RAG over local documents
+The mechanisms are already designed in
+[docs/CAPABILITIES.md](docs/CAPABILITIES.md):
+
+- [ ] whisper.rn ASR (offline meeting-grade transcription) + background audio
+- [ ] Phone file organization (Android SAF, plan → approve → apply with undo)
+- [ ] True git via isomorphic-git; neural TTS; speaker diarization
+- [ ] On-device E2E benchmark results (needs real hardware)
 
 ## Contributing
 

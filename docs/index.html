@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Marmot — your AI lives here now</title>
+<meta name="description" content="Ollama for your phone. Download small open models and chat, plan, research, and talk with them — entirely on-device. No account, no cloud, no telemetry." />
+<link rel="icon" href="assets/logo.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..900;1,9..144,340..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0a0e14; --ink2:#0f1622; --ink3:#141d2c;
+    --line:#233045; --line-soft:#1a2434;
+    --cream:#efeae0; --cream-dim:#a9a396; --cream-faint:#6f6c63;
+    --amber:#e8a33d; --amber-deep:#c9821a; --green:#3fb950; --red:#f85149;
+    --serif:"Fraunces",Georgia,serif;
+    --sans:"Instrument Sans",-apple-system,sans-serif;
+    --mono:"Fragment Mono",ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--cream);font-family:var(--sans);
+    font-size:17px;line-height:1.6;overflow-x:hidden;
+  }
+  ::selection{background:var(--amber);color:var(--ink)}
+
+  /* ---- atmosphere ---- */
+  .sky{position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(1100px 700px at 78% -10%, #16233a 0%, transparent 60%),
+      radial-gradient(900px 600px at -10% 30%, #101a2b 0%, transparent 55%),
+      linear-gradient(180deg,#0a0e14 0%,#0d1420 45%,#0a0e14 100%);
+  }
+  .grain{position:fixed;inset:0;z-index:-1;opacity:.05;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
+  #stars{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .star{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--cream);opacity:.35}
+  .star.tw{animation:twinkle 4s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.6}}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+  /* ---- nav ---- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+    background:rgba(10,14,20,.72);border-bottom:1px solid var(--line-soft)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;max-width:1120px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--cream)}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  .brand span{font-family:var(--serif);font-weight:700;font-size:21px;letter-spacing:.2px}
+  .nav-links{display:flex;align-items:center;gap:22px}
+  .nav-links a{color:var(--cream-dim);text-decoration:none;font-size:14.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--cream)}
+  .btn{display:inline-flex;align-items:center;gap:9px;text-decoration:none;border-radius:999px;
+    padding:11px 22px;font-weight:600;font-size:15px;transition:transform .2s,box-shadow .2s,background .2s}
+  .btn:active{transform:scale(.97)}
+  .btn-amber{background:var(--amber);color:#161000}
+  .btn-amber:hover{box-shadow:0 6px 30px rgba(232,163,61,.35);transform:translateY(-1px)}
+  .btn-ghost{border:1px solid var(--line);color:var(--cream)}
+  .btn-ghost:hover{border-color:var(--cream-dim)}
+  .btn-sm{padding:8px 16px;font-size:13.5px}
+
+  /* ---- hero ---- */
+  header.hero{position:relative;padding:96px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:24px;align-items:center}
+  .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}
+  .kicker::before{content:"● ";animation:blink 2.6s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  h1{font-family:var(--serif);font-weight:620;font-size:clamp(46px,7.2vw,88px);
+    line-height:1.02;letter-spacing:-.015em;margin:20px 0 26px;font-variation-settings:"opsz" 100}
+  h1 em{font-style:italic;font-weight:640;color:var(--amber);font-variation-settings:"opsz" 100}
+  .hero p.lede{font-size:19px;color:var(--cream-dim);max-width:33em;margin-bottom:34px}
+  .hero p.lede b{color:var(--cream);font-weight:600}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .cta-note{font-family:var(--mono);font-size:12.5px;color:var(--cream-faint);margin-top:18px}
+
+  .phones{position:relative;height:560px;min-width:280px}
+  .phones img{position:absolute;border-radius:34px;box-shadow:0 34px 80px rgba(0,0,0,.55)}
+  .phone-back{width:238px;right:180px;top:40px;transform:rotate(-7deg);opacity:.85}
+  .phone-front{width:262px;right:0;top:0;transform:rotate(3.5deg);animation:bob 7s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:rotate(3.5deg) translateY(0)}50%{transform:rotate(3.5deg) translateY(-12px)}}
+  .sticker{position:absolute;left:-6px;bottom:30px;width:92px;transform:rotate(-9deg);
+    filter:drop-shadow(0 12px 24px rgba(0,0,0,.5));animation:bob2 9s ease-in-out infinite}
+  @keyframes bob2{0%,100%{transform:rotate(-9deg) translateY(0)}50%{transform:rotate(-7deg) translateY(-8px)}}
+
+  /* ---- ridge divider ---- */
+  .ridge{display:block;width:100%;height:90px;margin:-1px 0}
+  .ridge path{fill:var(--ink2)}
+  .ridge.flip{transform:scaleY(-1)}
+
+  /* ---- manifesto ---- */
+  .manifesto{background:var(--ink2);padding:90px 0 84px;position:relative}
+  .manifesto .lines{font-family:var(--serif);font-weight:600;
+    font-size:clamp(38px,6vw,72px);line-height:1.12;letter-spacing:-.01em}
+  .manifesto .lines span{display:block}
+  .manifesto .lines b{color:var(--amber);font-weight:600}
+  .manifesto .tag{font-family:var(--mono);color:var(--cream-faint);font-size:14px;margin-top:30px;letter-spacing:.06em}
+  .manifesto .tag i{color:var(--green);font-style:normal}
+
+  /* ---- sections ---- */
+  section{padding:88px 0}
+  .sec-kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin-bottom:14px}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(32px,4.4vw,52px);letter-spacing:-.01em;line-height:1.1;margin-bottom:14px}
+  .sec-sub{color:var(--cream-dim);max-width:38em;margin-bottom:52px;font-size:17.5px}
+
+  /* features */
+  .feat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:22px}
+  .feat{grid-column:span 2;background:var(--ink2);border:1px solid var(--line-soft);border-radius:22px;
+    padding:26px;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s;position:relative;overflow:hidden}
+  .feat:hover{transform:translateY(-6px);border-color:var(--line)}
+  .feat.wide{grid-column:span 3}
+  .feat h3{font-family:var(--serif);font-size:24px;font-weight:600;margin:4px 0 10px}
+  .feat p{color:var(--cream-dim);font-size:15.5px;line-height:1.55}
+  .feat .chip{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
+  .feat .shot{display:block;width:78%;max-width:230px;margin:26px auto -78px;border-radius:26px;
+    box-shadow:0 24px 48px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .feat:hover .shot{transform:translateY(-10px) rotate(-1.2deg)}
+  .feat.pad-shot{padding-bottom:120px}
+
+  /* agent stack */
+  .stack-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:start}
+  .terminal{background:#0b1018;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.45)}
+  .term-bar{display:flex;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line-soft)}
+  .term-bar i{width:11px;height:11px;border-radius:50%;background:var(--line)}
+  .term-bar i:first-child{background:#e8613d}.term-bar i:nth-child(2){background:var(--amber)}.term-bar i:nth-child(3){background:var(--green)}
+  .term-body{font-family:var(--mono);font-size:13.5px;line-height:2.05;padding:20px 24px;color:var(--cream-dim)}
+  .term-body b{color:var(--cream);font-weight:400}
+  .term-body .ok{color:var(--green)}
+  .term-body .dim{color:var(--cream-faint)}
+  .stat-big{font-family:var(--serif);font-weight:640;font-size:clamp(64px,8vw,110px);line-height:1;color:var(--amber)}
+  .stat-label{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);margin-top:6px}
+  .stat-row{display:flex;flex-direction:column;gap:34px}
+
+  /* models */
+  .models{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .model{background:var(--ink2);border:1px solid var(--line-soft);border-radius:18px;padding:22px 18px;
+    transition:transform .3s,border-color .3s}
+  .model:hover{transform:translateY(-5px);border-color:var(--amber)}
+  .model .cls{font-size:26px}
+  .model h4{font-family:var(--serif);font-size:19px;font-weight:600;margin:10px 0 2px}
+  .model .sz{font-family:var(--mono);font-size:12.5px;color:var(--amber)}
+  .model p{font-size:13px;color:var(--cream-dim);margin-top:8px;line-height:1.45}
+  .models-note{font-family:var(--mono);font-size:12.5px;color:var(--cream-faint);margin-top:22px}
+
+  /* stats strip */
+  .strip{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
+    background:var(--ink2)}
+  .strip-in{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:46px 28px;max-width:1120px;margin:0 auto;text-align:center}
+  .strip .n{font-family:var(--serif);font-weight:640;font-size:44px;color:var(--cream)}
+  .strip .n i{color:var(--amber);font-style:normal}
+  .strip .l{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream-faint);margin-top:4px}
+
+  /* footer */
+  footer{padding:70px 0 60px;color:var(--cream-faint);font-size:14.5px}
+  .foot-grid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-end}
+  footer a{color:var(--cream-dim);text-decoration:none}
+  footer a:hover{color:var(--amber)}
+  .foot-wink{font-family:var(--mono);font-size:12px;margin-top:14px}
+
+  /* reveals */
+  [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  [data-reveal].in{opacity:1;transform:none}
+  .hero [data-reveal]{transition-delay:var(--d,0s)}
+
+  @media (max-width:640px){
+    .nav-links a:not(.btn){display:none}
+  }
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr}
+    .phones{height:480px;margin-top:30px}
+    .phone-back{right:auto;left:8%}
+    .phone-front{right:8%}
+    .stack-grid{grid-template-columns:1fr}
+    .stat-row{flex-direction:row;gap:40px}
+    .models{grid-template-columns:repeat(2,1fr)}
+    .feat,.feat.wide{grid-column:span 6}
+    .strip-in{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    [data-reveal]{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="sky"></div><div class="grain"></div><div id="stars"></div>
+
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="#"><img src="assets/logo.svg" alt="" /><span>Marmot</span></a>
+    <div class="nav-links">
+      <a href="#agent">Agent</a>
+      <a href="#models">Models</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/docs/AGENT.md">Docs</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/stancsz/marmot">★ GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker" data-reveal style="--d:.05s">Ollama for your phone</div>
+      <h1 data-reveal style="--d:.15s">Your AI lives<br /><em>here</em> now.</h1>
+      <p class="lede" data-reveal style="--d:.28s">
+        Marmot downloads small open models and runs them <b>entirely on your
+        phone</b> — chat, agents with tools, semantic memory, document &amp;
+        repo RAG, and live voice. <b>Nothing leaves the device.</b>
+      </p>
+      <div class="cta-row" data-reveal style="--d:.4s">
+        <a class="btn btn-amber" href="https://github.com/stancsz/marmot">Get Marmot</a>
+        <a class="btn btn-ghost" href="https://github.com/stancsz/marmot/blob/main/docs/CAPABILITIES.md">How it works</a>
+      </div>
+      <div class="cta-note" data-reveal style="--d:.5s">iOS + Android · MIT · works in airplane mode</div>
+    </div>
+    <div class="phones" data-reveal style="--d:.35s">
+      <img class="phone-back" src="assets/screen-voice.svg" alt="Voice mode" />
+      <img class="phone-front" src="assets/screen-agent.svg" alt="Agent mode" />
+      <img class="sticker" src="assets/logo.svg" alt="Marmot logo" />
+    </div>
+  </div>
+</header>
+
+<svg class="ridge" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,90 L0,58 L140,26 L260,52 L390,10 L520,48 L640,22 L780,58 L900,18 L1040,50 L1200,30 L1200,90 Z"/>
+</svg>
+
+<div class="manifesto">
+  <div class="wrap">
+    <div class="lines" data-reveal>
+      <span>No account<b>.</b></span>
+      <span>No cloud<b>.</b></span>
+      <span>No telemetry<b>.</b></span>
+    </div>
+    <div class="tag" data-reveal>$ network_requests --after-download <i>→ 0</i> &nbsp;// verified by architecture, not policy</div>
+  </div>
+</div>
+
+<svg class="ridge flip" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,90 L0,58 L140,26 L260,52 L390,10 L520,48 L640,22 L780,58 L900,18 L1040,50 L1200,30 L1200,90 Z"/>
+</svg>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-kicker" data-reveal>What it does</div>
+    <h2 data-reveal>A pocket lab,<br />not just a chatbox.</h2>
+    <p class="sec-sub" data-reveal>Every feature below is real, unit-tested, and documented — 119 tests
+    and counting, enforced by CI on every commit.</p>
+
+    <div class="feat-grid">
+      <div class="feat wide pad-shot" data-reveal>
+        <div class="chip">Agent mode</div>
+        <h3>It plans. It uses tools. It checks its work.</h3>
+        <p>A planner decomposes the task, fresh-context subagents execute each
+        step with calculator, clock, chat search, and RAG tools, live ☑
+        check-offs tick by, and an optional judge scores the answer before
+        you see it.</p>
+        <img class="shot" src="assets/screen-agent.svg" alt="Agent mode screenshot" />
+      </div>
+      <div class="feat wide pad-shot" data-reveal>
+        <div class="chip">Voice</div>
+        <h3>Talk to it. Bring it to meetings.</h3>
+        <p>A hands-free conversation loop with an animated voice stage — plus
+        meeting mode: continuous transcription, and say “Marmot, …” for a
+        suggested contribution it will only speak when you tap.</p>
+        <img class="shot" src="assets/screen-voice.svg" alt="Voice mode screenshot" />
+      </div>
+      <div class="feat" data-reveal>
+        <div class="chip">Memory + RAG</div>
+        <h3>It remembers — by meaning.</h3>
+        <p>Facts about you, episodic summaries, imported documents, even whole
+        GitHub repos — recalled with on-device embeddings and injected into
+        every agent run.</p>
+      </div>
+      <div class="feat" data-reveal>
+        <div class="chip">Web research · opt-in</div>
+        <h3>Research with receipts.</h3>
+        <p>Flip one switch and the agent can search and read the web, citing
+        sources. Leave it off and Marmot is provably offline.</p>
+      </div>
+      <div class="feat" data-reveal>
+        <div class="chip">Your data</div>
+        <h3>Yours to carry away.</h3>
+        <p>Markdown sharing, JSON backups to Drive or OneDrive via the share
+        sheet, and safe re-import that never overwrites newer history. No
+        cloud SDKs. No OAuth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="agent" style="padding-top:20px">
+  <div class="wrap stack-grid">
+    <div data-reveal>
+      <div class="sec-kicker">Under the hood</div>
+      <h2>The whole frontier-agent stack, in your pocket.</h2>
+      <p class="sec-sub" style="margin-bottom:30px">Nine layers, all shipped, all unit-tested —
+      the same architecture the big coding agents converged on, running against a 2–4B model on your phone.</p>
+      <div class="terminal">
+        <div class="term-bar"><i></i><i></i><i></i></div>
+        <div class="term-body">
+<span class="ok">✓</span> <b>system</b>     <span class="dim">SYSTEM.md kernel + user personas</span><br />
+<span class="ok">✓</span> <b>skills</b>     <span class="dim">trigger → procedure registry</span><br />
+<span class="ok">✓</span> <b>loop</b>       <span class="dim">observe → decide → act → verify</span><br />
+<span class="ok">✓</span> <b>tools</b>      <span class="dim">calc · clock · chats · docs · web</span><br />
+<span class="ok">✓</span> <b>memory</b>     <span class="dim">user·project·episodic·semantic</span><br />
+<span class="ok">✓</span> <b>planning</b>   <span class="dim">live plan panel, model-driven ☑</span><br />
+<span class="ok">✓</span> <b>reflection</b> <span class="dim">self-critique may revise</span><br />
+<span class="ok">✓</span> <b>judge</b>      <span class="dim">independent scoring, fail-closed</span><br />
+<span class="ok">✓</span> <b>subagents</b>  <span class="dim">fresh-context executor per step</span>
+        </div>
+      </div>
+    </div>
+    <div class="stat-row" data-reveal>
+      <div><div class="stat-big">119</div><div class="stat-label">unit tests, CI-enforced</div></div>
+      <div><div class="stat-big">9<span style="color:var(--cream)">/9</span></div><div class="stat-label">agent layers shipped</div></div>
+      <div><div class="stat-big">0</div><div class="stat-label">servers involved</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="models" style="padding-top:30px">
+  <div class="wrap">
+    <div class="sec-kicker" data-reveal>The catalog</div>
+    <h2 data-reveal>One champion per weight class.</h2>
+    <p class="sec-sub" data-reveal>The highest-rated open model at every size a phone can carry —
+    byte-exact, benchmark-picked, re-evaluated as new models ship. Or import any .gguf of your own.</p>
+    <div class="models">
+      <div class="model" data-reveal><div class="cls">🪶</div><h4>Qwen3.5 0.8B</h4><div class="sz">0.53 GB</div><p>Instant on any phone. 200+ languages.</p></div>
+      <div class="model" data-reveal><div class="cls">🥊</div><h4>Qwen3.5 2B</h4><div class="sz">1.28 GB</div><p>The top-rated small all-rounder.</p></div>
+      <div class="model" data-reveal><div class="cls">🥋</div><h4>SmolLM3 3B</h4><div class="sz">1.92 GB</div><p>Strongest fully-open 3B.</p></div>
+      <div class="model" data-reveal><div class="cls">🏋️</div><h4>Qwen3.5 4B</h4><div class="sz">2.74 GB</div><p>Strongest dense 4B. Wants 8 GB RAM.</p></div>
+      <div class="model" data-reveal><div class="cls">👑</div><h4>Gemma 4 E4B</h4><div class="sz">4.06 GB</div><p>Closest to cloud quality on a phone.</p></div>
+    </div>
+    <div class="models-note" data-reveal>all Apache 2.0 · resumable background downloads · RAM-fit badges from your device’s actual memory</div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="strip-in">
+    <div data-reveal><div class="n"><i>~2</i> MB</div><div class="l">JS bundle</div></div>
+    <div data-reveal><div class="n"><i>1.2</i>–1.7s</div><div class="l">voice first-audio target</div></div>
+    <div data-reveal><div class="n"><i>0.34</i>%</div><div class="l">logo pixel diff, traced</div></div>
+    <div data-reveal><div class="n">MIT</div><div class="l">forever</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a class="brand" href="#" style="margin-bottom:10px"><img src="assets/logo.svg" alt="" style="width:30px;height:30px;border-radius:8px" /> <span style="font-family:var(--serif);font-weight:700;font-size:18px">Marmot</span></a>
+      <div class="foot-wink">a marmot stores food for winter. yours stores intelligence.</div>
+    </div>
+    <div style="display:flex;gap:26px;flex-wrap:wrap">
+      <a href="https://github.com/stancsz/marmot">GitHub</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/docs/AGENT.md">Agent docs</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/docs/CAPABILITIES.md">Capabilities</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/LICENSE">MIT License</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:34px;font-family:var(--mono);font-size:12px">
+    built on <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> · <a href="https://github.com/mybigday/llama.rn">llama.rn</a> · quants by unsloth
+  </div>
+</footer>
+
+<script>
+  // starfield (skipped for reduced motion)
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const field=document.getElementById('stars');
+    for(let i=0;i<70;i++){
+      const s=document.createElement('div');
+      s.className='star'+(i%3===0?' tw':'');
+      s.style.left=(Math.random()*100)+'vw';
+      s.style.top=(Math.random()*100)+'vh';
+      s.style.animationDelay=(Math.random()*4)+'s';
+      const z=Math.random();
+      s.style.width=s.style.height=(z>0.85?2.5:z>0.5?2:1.5)+'px';
+      field.appendChild(s);
+    }
+  }
+  // reveal on scroll
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+  }),{threshold:.12});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
