@@ -2,7 +2,7 @@
   <img src="docs/assets/logo.svg" alt="Marmot logo" width="180" />
 </p>
 
-<h1 align="center">Marmot</h1>
+<h3 align="center">Marmot</h3>
 
 <p align="center">
   <b>Ollama for your phone.</b><br/>
