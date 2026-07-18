@@ -42,7 +42,7 @@ One intentional increment per iteration (per SYSTEM.md):
 ## Roadmap
 
 - [x] Agent core: loop, tools, policies, planner, skills, memory, reflection, judge (pure TS + 24 unit tests)
-- [ ] Wire Agent Mode into ChatScreen: toggle, engine adapter (`LlamaEngine → AgentLLM`), step timeline UI (plan/tool/observation chips), screenshot mockup
+- [x] Wire Agent Mode into ChatScreen: ⚙ Agent toggle chip, engine adapter (`src/lib/agentRuntime.ts`), cancellable LLM wrapper (tested), live thought/tool/observation timeline, `screen-agent.svg` mockup
 - [ ] Memory UI: view/add/delete memories in Settings; auto-capture episodic summaries after chats
 - [ ] Plan panel: show the live plan with check-offs during agent runs
 - [ ] Reflection/judge toggle in Settings ("verify answers" — runs reflect + judge after each agent answer, shows verdict badge)
@@ -56,3 +56,4 @@ One intentional increment per iteration (per SYSTEM.md):
 | Date | Evidence |
 | --- | --- |
 | 2026-07-18 | `npm test`: 2 suites, 24/24 passed (loop, tools, policies, planner, skills, memory, reflection, judge, JSON extraction, calculator). `npx tsc --noEmit` clean. |
+| 2026-07-18 | Agent Mode UI wired: `npm test` 27/27 (adds cancellable-LLM tests: pass-through, abort-before-dispatch, discard-late-reply). `tsc` + Android export clean. UI evidence: `docs/assets/screen-agent.svg` (design mockup — on-device screenshot still owed by the hardware E2E item). |

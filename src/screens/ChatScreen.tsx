@@ -27,6 +27,8 @@ import {
 import { engine } from '../lib/engine'
 import { downloads } from '../lib/downloads'
 import { shareChatAsMarkdown } from '../lib/exportShare'
+import { runAgentTask } from '../lib/agentRuntime'
+import { AgentCancelled, AgentStep } from '../agent'
 import { CATALOG, getModel } from '../models/catalog'
 import { splitThinking } from '../lib/thinking'
 import { Palette, radius, spacing, themedStyles } from '../theme'
@@ -53,6 +55,9 @@ export default function ChatScreen() {
   const [phase, setPhase] = useState<'idle' | 'loading-model' | 'generating'>('idle')
   const [error, setError] = useState<string | null>(null)
   const [downloadedIds, setDownloadedIds] = useState<ModelId[]>([])
+  const [agentMode, setAgentMode] = useState(false)
+  const [agentSteps, setAgentSteps] = useState<AgentStep[]>([])
+  const cancelRef = useRef(false)
   const listRef = useRef<FlatList>(null)
   const chatRef = useRef<Chat | null>(null)
   chatRef.current = chat
@@ -146,6 +151,8 @@ export default function ChatScreen() {
 
     setError(null)
     setInput('')
+    setAgentSteps([])
+    cancelRef.current = false
     const userMsg = newMessage('user', text)
     let working: Chat = {
       ...current,
@@ -160,6 +167,28 @@ export default function ChatScreen() {
       await engine.ensureLoaded(working.modelId!, settings.contextLength)
       setPhase('generating')
       setStreaming('')
+
+      if (agentMode) {
+        const result = await runAgentTask(text, settings, () => cancelRef.current, (step) =>
+          setAgentSteps((prev) => [...prev, step])
+        )
+        const toolCalls = result.steps.filter((s) => s.kind === 'tool_call').length
+        const assistantMsg: ChatMessage = {
+          ...newMessage(
+            'assistant',
+            result.truncated ? `${result.answer}` : result.answer
+          ),
+          stats: { predictedTokens: undefined, tokensPerSecond: undefined },
+        }
+        working = {
+          ...working,
+          messages: [...working.messages, assistantMsg],
+          updatedAt: Date.now(),
+        }
+        await persist(working)
+        if (toolCalls === 0) setAgentSteps([]) // nothing interesting to keep
+        return
+      }
 
       const history = [
         { role: 'system' as const, content: settings.systemPrompt },
@@ -192,14 +221,16 @@ export default function ChatScreen() {
       }
       await persist(working)
     } catch (e: any) {
-      setError(e?.message ?? 'Generation failed')
+      if (e instanceof AgentCancelled) setError('Stopped.')
+      else setError(e?.message ?? 'Generation failed')
     } finally {
       setStreaming('')
       setPhase('idle')
     }
-  }, [input, settings, phase, persist])
+  }, [input, settings, phase, agentMode, persist])
 
   const stop = useCallback(() => {
+    cancelRef.current = true
     engine.stop()
   }, [])
 
@@ -234,8 +265,18 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? headerHeight : 0}
     >
-      {/* model picker strip */}
+      {/* model picker strip + agent toggle */}
       <View style={styles.modelStripWrap}>
+        <Pressable
+          disabled={phase !== 'idle'}
+          hitSlop={6}
+          style={[styles.agentChip, agentMode && styles.agentChipActive]}
+          onPress={() => setAgentMode((v) => !v)}
+        >
+          <Text style={[styles.agentChipText, agentMode && styles.agentChipTextActive]}>
+            ⚙ Agent
+          </Text>
+        </Pressable>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -281,7 +322,17 @@ export default function ChatScreen() {
             {phase === 'loading-model' && (
               <StatusRow text={`Loading ${getModel(chat.modelId)?.name ?? 'model'}…`} spinner />
             )}
-            {phase === 'generating' && streamingParts && (
+            {agentSteps.length > 0 && (
+              <View style={styles.stepTimeline}>
+                {agentSteps.map((s, i) => (
+                  <StepRow key={i} step={s} />
+                ))}
+              </View>
+            )}
+            {phase === 'generating' && agentMode && (
+              <StatusRow text="Agent working…" spinner />
+            )}
+            {phase === 'generating' && !agentMode && streamingParts && (
               <View style={[styles.bubble, styles.assistantBubble]}>
                 {streamingParts.isThinking && !streamingParts.answer ? (
                   <Text style={styles.thinkingText}>Thinking…</Text>
@@ -290,7 +341,7 @@ export default function ChatScreen() {
                 )}
               </View>
             )}
-            {phase === 'generating' && !streamingParts && (
+            {phase === 'generating' && !agentMode && !streamingParts && (
               <StatusRow text="…" spinner />
             )}
             {error && <Text style={styles.errorText}>{error}</Text>}
@@ -354,6 +405,29 @@ function StatusRow({ text, spinner }: { text: string; spinner?: boolean }) {
   )
 }
 
+function StepRow({ step }: { step: AgentStep }) {
+  const { colors } = useTheme()
+  const styles = getStyles(colors)
+  const icon =
+    step.kind === 'thought' ? '💭' : step.kind === 'tool_call' ? '🔧' : step.kind === 'observation' ? '↳' : step.kind === 'error' ? '⚠' : '✓'
+  const label =
+    step.kind === 'tool_call'
+      ? `${step.tool} ${step.content}`
+      : step.content
+  if (step.kind === 'final') return null // the final answer becomes the bubble
+  return (
+    <View style={styles.stepRow}>
+      <Text style={styles.stepIcon}>{icon}</Text>
+      <Text
+        style={[styles.stepText, step.kind === 'error' && { color: colors.red }]}
+        numberOfLines={2}
+      >
+        {label}
+      </Text>
+    </View>
+  )
+}
+
 const getStyles = themedStyles((colors: Palette) =>
   StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
@@ -369,9 +443,31 @@ const getStyles = themedStyles((colors: Palette) =>
   },
   primaryBtnText: { color: colors.accentText, fontWeight: '700', fontSize: 16 },
   modelStripWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  agentChip: {
+    marginLeft: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  agentChipActive: { backgroundColor: colors.green, borderColor: colors.green },
+  agentChipText: { color: colors.textDim, fontSize: 13, fontWeight: '600' },
+  agentChipTextActive: { color: colors.bg },
+  stepTimeline: {
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  stepRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
+  stepIcon: { fontSize: 12, width: 18, textAlign: 'center' },
+  stepText: { color: colors.textDim, fontSize: 12, flex: 1, lineHeight: 17 },
   modelStrip: {
     flexDirection: 'row',
     gap: spacing.sm,
