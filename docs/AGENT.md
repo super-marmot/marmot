@@ -54,7 +54,7 @@ Polish (post-roadmap):
 
 - [x] Markdown rendering in assistant bubbles (`src/lib/markdown.ts` pure parser + `MarkdownText` themed renderer; headings, lists, fenced/inline code, bold/italic, tappable links)
 - [x] Import a local `.gguf` from the Files app: "Import .gguf" in the model library copies the file into the models dir, validates size post-copy (providers may not report it), derives name/quant/id from the filename (pure, tested incl. collisions), and imported models are first-class — selectable in the chat strip, RAM-fit badged, deletable, engine-loaded via the same `modelPath`
-- [ ] Background downloads
+- [x] Background downloads: iOS BACKGROUND download session pinned explicitly (platform default made a guarantee); "continues in background" hint on downloading cards; free-space refresh on app foreground; DownloadManager state machine now unit-tested with mocked native modules (init/done, orphan cleanup, atomic move, error, cancel-not-error, pause snapshot, remove-cancels-task)
 - [x] Chat import: Settings → Import chats picks a JSON export, validates it (`parseChatExport`), and merges by id (`mergeChats` — a stale backup never clobbers newer local history); confirm dialog shows added/updated/skipped counts
 
 ## Verification log
@@ -71,3 +71,4 @@ Polish (post-roadmap):
 | 2026-07-18 | Chat import: `npm test` 56/56 (adds export round-trip parse, friendly rejection of non-JSON/foreign/future-version files, malformed chat+message dropping with valid ones kept, merge add/update/skip semantics, stale-backup protection, recency sort). `tsc` + Android export clean. UI evidence: split Export/Import buttons in `docs/assets/screen-settings.svg`. |
 | 2026-07-18 | Markdown bubbles: `npm test` 64/64 (adds inline tokenizer tests incl. code-protects-markup, paragraph joining, heading/list parsing, fenced code verbatim + unterminated-fence safety, realistic reply end-to-end). `tsc` + Android export clean. UI evidence: bold/inline-code in `docs/assets/screen-chat.svg`. |
 | 2026-07-18 | .gguf import: `npm test` 69/69 (adds name/quant/slug derivation, extension + min-size rejection, IQ-quant detection, id collision suffixing, hostile-filename survival). `tsc` + Android export clean. UI evidence: Import link + IMPORTED section in `docs/assets/screen-models.svg`. |
+| 2026-07-18 | Background downloads: `npm test` 76/76 (adds 7 DownloadManager state-machine tests over mocked expo-file-system/AsyncStorage: init-done, orphan-.part cleanup, atomic move on completion, network-error state, cancel-ends-idle-not-error, pause-persists-snapshot + no-task no-op, remove-cancels-active-task). `tsc` + Android export clean. UI evidence: background hint in `docs/assets/screen-models.svg`. |

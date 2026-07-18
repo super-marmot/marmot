@@ -33,7 +33,7 @@
     <text x="40" y="346" fill="#8B949E" font-size="10.5">Alibaba Qwen · 2B · Q4_K_M · 1.28 GB</text>
     <rect x="40" y="360" width="240" height="6" rx="3" fill="#1F2630"/>
     <rect x="40" y="360" width="154" height="6" rx="3" fill="#E8A33D"/>
-    <text x="40" y="382" fill="#8B949E" font-size="11">823 MB / 1.28 GB</text>
+    <text x="40" y="382" fill="#8B949E" font-size="11">823 MB / 1.28 GB · continues in background</text>
     <rect x="40" y="396" width="64" height="26" rx="13" fill="#1F2630" stroke="#2D333B"/>
     <text x="56" y="413" fill="#E6EDF3" font-size="11.5" font-weight="600">Pause</text>
     <rect x="112" y="396" width="68" height="26" rx="13" fill="none" stroke="#F85149"/>

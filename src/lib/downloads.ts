@@ -6,6 +6,15 @@ import { DownloadState, ModelId } from '../types'
 const MODELS_DIR = `${FileSystem.documentDirectory}models/`
 const RESUME_KEY = 'marmot.downloads.resume.v1'
 
+/**
+ * BACKGROUND session keeps multi-GB downloads running when the app is
+ * backgrounded on iOS (it is the platform default, pinned here so it's a
+ * guarantee, not an accident). Android continues while the process lives.
+ */
+const DOWNLOAD_OPTIONS: FileSystem.DownloadOptions = {
+  sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
+}
+
 export function modelPath(modelId: ModelId): string {
   return `${MODELS_DIR}${modelId}.gguf`
 }
@@ -129,7 +138,7 @@ class DownloadManager {
         saved.resumeData
       )
     } else {
-      task = FileSystem.createDownloadResumable(spec.url, partPath(modelId), {}, onProgress)
+      task = FileSystem.createDownloadResumable(spec.url, partPath(modelId), DOWNLOAD_OPTIONS, onProgress)
     }
     this.tasks[modelId] = task
     this.update(modelId, { status: 'downloading', error: undefined })

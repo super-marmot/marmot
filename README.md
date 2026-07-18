@@ -48,9 +48,10 @@ actual memory so you know before downloading whether it will run comfortably.
   download from Hugging Face. Chats never leave the device.
 - ⚡ **Streaming responses** with per-reply tokens/sec stats, rendered as
   markdown (bold, lists, code blocks, links) in assistant bubbles.
-- 📦 **Resumable downloads** that survive app restarts — pause, resume,
-  cancel, delete. A `.gguf` on disk is always complete (downloads write to a
-  `.part` file and move atomically).
+- 📦 **Resumable downloads** that continue in the background (iOS background
+  session) and survive app restarts — pause, resume, cancel, delete. A
+  `.gguf` on disk is always complete (downloads write to a `.part` file and
+  move atomically).
 - 🧠 **RAM-fit badges** — "Runs great / Should run / May be too big" based on
   your device's total memory vs. model size.
 - 🤔 **Reasoning-model aware** — Qwen3.5 and SmolLM3's `<think>…</think>`
@@ -175,7 +176,7 @@ depend on it.
 - [x] Markdown rendering in chat bubbles
 - [x] Import chats back from a JSON export
 - [x] Import any local `.gguf` from the Files app
-- [ ] Background downloads
+- [x] Background downloads
 - [ ] Android GPU (OpenCL/Vulkan) inference where supported
 - [ ] Prompt templates / saved personas
 - [ ] Basic RAG over local documents

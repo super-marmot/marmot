@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
+  AppState,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -59,9 +60,17 @@ export default function ModelsScreen() {
         }
       })
     })
+    // returning from background: progress callbacks resume on their own,
+    // but free-space needs a fresh read
+    const appState = AppState.addEventListener('change', (next) => {
+      if (next === 'active') {
+        downloads.freeDiskBytes().then((b) => !cancelled && setFreeBytes(b)).catch(() => {})
+      }
+    })
     return () => {
       cancelled = true
       unsub?.()
+      appState.remove()
     }
   }, [])
 
@@ -165,7 +174,7 @@ function ModelCard({ spec, state }: { spec: ModelSpec; state?: DownloadState }) 
           </View>
           <Text style={styles.progressText}>
             {formatBytes(state?.receivedBytes ?? 0)} / {formatBytes(state?.totalBytes ?? spec.sizeBytes)}
-            {status === 'paused' ? ' · paused' : ''}
+            {status === 'paused' ? ' · paused' : ' · continues in background'}
           </Text>
         </View>
       ) : null}
