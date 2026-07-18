@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # --ignore-scripts: llama.rn's postinstall downloads ~100 MB of native
+      # artifacts needed only for device builds — jest, tsc, and the Metro
+      # bundle don't touch them, and skipping keeps CI fast and offline-safe.
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npx jest --ci
+
+      - name: Android bundle
+        run: npx expo export --platform android --output-dir /tmp/export-test
+        env:
+          EXPO_NO_TELEMETRY: '1'

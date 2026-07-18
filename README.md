@@ -11,6 +11,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/stancsz/marmot/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stancsz/marmot/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-E8A33D.svg" /></a>
   <img alt="Platforms" src="https://img.shields.io/badge/platform-iOS%20%7C%20Android-0D1117.svg" />
   <img alt="Powered by llama.cpp" src="https://img.shields.io/badge/inference-llama.cpp-3FB950.svg" />
