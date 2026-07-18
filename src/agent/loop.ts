@@ -26,6 +26,8 @@ interface LoopOptions {
   skills?: Skill[]
   memoryContext?: string
   plan?: Plan
+  /** persona/system prompt from settings — how to speak and act */
+  persona?: string
   onStep?: (step: AgentStep) => void
 }
 
@@ -43,7 +45,8 @@ function systemPrompt(
   policies: AgentPolicies,
   skills: Skill[],
   memoryContext: string,
-  plan?: Plan
+  plan?: Plan,
+  persona?: string
 ): string {
   const usable = tools.filter((t) => policies.allowedTools.includes(t.name))
   const toolLines = usable
@@ -51,6 +54,7 @@ function systemPrompt(
     .join('\n')
   return [
     'You are Marmot, a local agent running fully on the user’s phone.',
+    persona ? `Persona (how to speak and act in your final answer): ${persona}` : '',
     'Work step by step: observe, decide, act, verify.',
     'On each turn respond with ONLY one JSON object, nothing else:',
     '  {"thought": "...", "action": "tool", "tool": "<name>", "args": {...}}',
@@ -105,7 +109,14 @@ export async function runAgentLoop(opts: LoopOptions): Promise<AgentResult> {
   const messages: LLMMessage[] = [
     {
       role: 'system',
-      content: systemPrompt(opts.tools, policies, skills, opts.memoryContext ?? '', opts.plan),
+      content: systemPrompt(
+        opts.tools,
+        policies,
+        skills,
+        opts.memoryContext ?? '',
+        opts.plan,
+        opts.persona
+      ),
     },
     { role: 'user', content: opts.task },
   ]

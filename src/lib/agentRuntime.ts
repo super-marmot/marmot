@@ -97,12 +97,13 @@ export async function runAgentTask(
       skills,
       memoryContext,
       plan,
+      persona: settings.systemPrompt,
       judgeGate: settings.verifyAnswers,
       onStep,
     })
   }
 
-  const result = await runAgentLoop({ llm, task, tools, skills, memoryContext, onStep })
+  const result = await runAgentLoop({ llm, task, tools, skills, memoryContext, persona: settings.systemPrompt, onStep })
   return { ...result, retried: false }
 }
 

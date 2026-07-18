@@ -60,6 +60,9 @@ actual memory so you know before downloading whether it will run comfortably.
   into the chat.
 - 🎛️ **Tunable sampling** — temperature, top-p, max tokens, context length
   (2k/4k/8k), and a custom system prompt.
+- 🎭 **Personas** — five built-in personalities (Concise, Coach, Writer,
+  Tutor, Developer) plus save-your-own; the active persona shapes both plain
+  chat and the agent's final answers.
 - 🌗 **Light & dark mode** — dark by default, with light and follow-system
   options in Settings.
 - 🤖 **Agent Mode** — flip the ⚙ Agent chip and the model works step-by-step
@@ -182,7 +185,7 @@ depend on it.
 - [x] Import any local `.gguf` from the Files app
 - [x] Background downloads
 - [ ] Android GPU (OpenCL/Vulkan) inference where supported
-- [ ] Prompt templates / saved personas
+- [x] Prompt templates / saved personas
 - [x] Basic RAG over local documents
 
 ## Contributing

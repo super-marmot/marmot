@@ -24,6 +24,8 @@ export interface OrchestratorOptions {
   memoryContext?: string
   /** precomputed plan (avoids a second planner call); made fresh if absent */
   plan?: Plan
+  /** persona/system prompt forwarded to executors and synthesis */
+  persona?: string
   /** run a judge pass on the synthesized answer, with one bounded retry */
   judgeGate?: boolean
   onStep?: (step: AgentStep) => void
@@ -56,7 +58,8 @@ async function synthesize(
   llm: AgentLLM,
   task: string,
   summaries: StepSummary[],
-  judgeFeedback?: string
+  judgeFeedback?: string,
+  persona?: string
 ): Promise<string> {
   const results = summaries
     .map((s) => `${s.id}. ${s.text} → ${s.answer}${s.incomplete ? ' (incomplete)' : ''}`)
@@ -69,7 +72,9 @@ async function synthesize(
       role: 'system',
       content:
         'You are Marmot, a local assistant. Combine the step results into one clear final answer ' +
-        'for the user. Respond with plain text only — no JSON.',
+        'for the user. Respond with plain text only — no JSON.' +
+        (persona ? `
+Persona (how to speak): ${persona}` : ''),
     },
     { role: 'user', content: `Task: ${task}\n\nStep results:\n${results}${feedback}` },
   ])
@@ -106,6 +111,7 @@ export async function runOrchestratedTask(opts: OrchestratorOptions): Promise<Or
       policies,
       skills: opts.skills,
       memoryContext: opts.memoryContext,
+      persona: opts.persona,
       onStep: opts.onStep,
     })
     return { ...result, retried: false }
@@ -123,6 +129,7 @@ export async function runOrchestratedTask(opts: OrchestratorOptions): Promise<Or
       policies: { ...policies, maxSteps: Math.min(EXECUTOR_MAX_STEPS, policies.maxSteps) },
       skills: opts.skills,
       memoryContext: opts.memoryContext,
+      persona: opts.persona,
       onStep: (s) => {
         if (s.kind !== 'final') emit(s)
       },
@@ -132,14 +139,14 @@ export async function runOrchestratedTask(opts: OrchestratorOptions): Promise<Or
     emit({ kind: 'plan_check', content: String(step.id) })
   }
 
-  let answer = (await synthesize(opts.llm, opts.task, summaries)).trim()
+  let answer = (await synthesize(opts.llm, opts.task, summaries, undefined, opts.persona)).trim()
   let verdict: JudgeVerdict | undefined
   let retried = false
 
   if (opts.judgeGate) {
     verdict = await judge(opts.llm, opts.task, answer)
     if (!verdict.accept) {
-      const improved = (await synthesize(opts.llm, opts.task, summaries, verdict.reasons)).trim()
+      const improved = (await synthesize(opts.llm, opts.task, summaries, verdict.reasons, opts.persona)).trim()
       const secondVerdict = await judge(opts.llm, opts.task, improved)
       answer = improved
       verdict = secondVerdict

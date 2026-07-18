@@ -13,7 +13,7 @@ runnable evidence (tests or an on-device screenshot).
 
 | Layer | Marmot implementation | Status | Evidence |
 | --- | --- | --- | --- |
-| System | `SYSTEM.md` execution kernel loaded by `CLAUDE.md`/`AGENTS.md`; in-app system prompt setting | ✅ shipped | repo root; Settings screen |
+| System | `SYSTEM.md` execution kernel loaded by `CLAUDE.md`/`AGENTS.md`; in-app personas — named system prompts (5 built-ins + user-saved) applied to chat and injected into the agent loop and orchestrator | ✅ shipped, tested | repo root; Settings screen; `jest`: persona tests |
 | Skills | `src/agent/skills.ts` — trigger → procedure registry (math, recall, writing, debugging) injected into the loop prompt | ✅ core, tested | `jest`: selection tests |
 | Loops | `src/agent/loop.ts` — Observe→Decide→Act→Verify state machine with JSON action protocol, malformed-output recovery, honest truncation | ✅ core, tested | `jest`: 5 loop tests |
 | Tools | `src/agent/tools.ts` — local tools: `calculator` (safe parser), `datetime`, `search_chats`; policy allowlist enforced | ✅ core, tested | `jest`: tool + policy tests |
@@ -57,6 +57,7 @@ Polish (post-roadmap):
 - [x] Background downloads: iOS BACKGROUND download session pinned explicitly (platform default made a guarantee); "continues in background" hint on downloading cards; free-space refresh on app foreground; DownloadManager state machine now unit-tested with mocked native modules (init/done, orphan cleanup, atomic move, error, cancel-not-error, pause snapshot, remove-cancels-task)
 - [x] CI: GitHub Actions runs typecheck, the full jest suite, and the Android Metro export on every push/PR to main (badge in README) — the Policies layer as mechanical enforcement
 - [x] Document RAG: Memory → Documents imports text/markdown files; `chunkText` (paragraph-aware, overlap on hard splits) + `DocumentStore` (semantic retrieval, lazy backfill, keyword fallback, size caps) + `search_documents` agent tool with a grounding skill
+- [x] Personas: 5 built-ins + save-current-prompt-as-persona (upsert by name, id collision handling — pure, tested); chips in Settings, long-press deletes customs; persona injected into the agent loop system prompt and orchestrator synthesis (tested)
 - [x] Chat import: Settings → Import chats picks a JSON export, validates it (`parseChatExport`), and merges by id (`mergeChats` — a stale backup never clobbers newer local history); confirm dialog shows added/updated/skipped counts
 
 ## Verification log
@@ -75,4 +76,5 @@ Polish (post-roadmap):
 | 2026-07-18 | .gguf import: `npm test` 69/69 (adds name/quant/slug derivation, extension + min-size rejection, IQ-quant detection, id collision suffixing, hostile-filename survival). `tsc` + Android export clean. UI evidence: Import link + IMPORTED section in `docs/assets/screen-models.svg`. |
 | 2026-07-18 | Background downloads: `npm test` 76/76 (adds 7 DownloadManager state-machine tests over mocked expo-file-system/AsyncStorage: init-done, orphan-.part cleanup, atomic move on completion, network-error state, cancel-ends-idle-not-error, pause-persists-snapshot + no-task no-op, remove-cancels-active-task). `tsc` + Android export clean. UI evidence: background hint in `docs/assets/screen-models.svg`. |
 | 2026-07-18 | Document RAG: `npm test` 85/85 (adds chunker tests: single-chunk, paragraph packing, hard-split overlap math, CRLF/blank normalization; store tests: add/list/remove with chunk cleanup, empty/oversize rejection, zero-keyword-overlap semantic retrieval, keyword fallback; tool formatting tests). `tsc` clean. UI evidence: Documents section in `docs/assets/screen-memory.svg`. |
+| 2026-07-18 | Personas: `npm test` 93/93 (adds validate/slug/upsert tests incl. case-insensitive update with stable id and built-in collision safety; loop persona-injection present/absent tests). `tsc` + Android export clean. UI evidence: persona chips in `docs/assets/screen-settings.svg`. |
 | 2026-07-18 | CI live and green: run 29644718327 (49s) — tsc, 76/76 jest, Android Metro export on ubuntu. Took 4 attempts: npm ci's lock-completeness check fails on every platform due to jest 30's wasm resolver fallback pinning nested @emnapi deps npm never writes to the lock (reproduced locally with a freshly regenerated lock); CI reconciles via npm install from the same lockfile, and the one-off logo-tracing devDependencies (sharp/resvg/potrace/pixelmatch/pngjs) were removed from package.json. |

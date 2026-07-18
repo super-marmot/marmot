@@ -16,6 +16,8 @@ import * as FileSystem from 'expo-file-system/legacy'
 import { InferenceSettings } from '../types'
 import { DEFAULT_SETTINGS, loadChats, loadSettings, saveAllChats, saveSettings } from '../lib/chatStore'
 import { mergeChats, parseChatExport } from '../lib/importParse'
+import { Persona } from '../lib/personaCore'
+import { loadPersonas, removeCustomPersona, saveCustomPersona } from '../lib/personas'
 import type { RootStackParamList } from '../navigation'
 import { shareAllChatsAsJson } from '../lib/exportShare'
 import { Palette, radius, spacing, themedStyles } from '../theme'
@@ -28,11 +30,14 @@ export default function SettingsScreen() {
   const { colors, mode, setMode } = useTheme()
   const styles = getStyles(colors)
   const [settings, setSettings] = useState<InferenceSettings | null>(null)
+  const [personas, setPersonas] = useState<Persona[]>([])
+  const [personaName, setPersonaName] = useState('')
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pending = useRef<InferenceSettings | null>(null)
 
   useEffect(() => {
     loadSettings().then(setSettings)
+    loadPersonas().then(setPersonas)
     return () => {
       // flush any debounced change on unmount so nothing is lost
       if (saveTimer.current) clearTimeout(saveTimer.current)
@@ -129,6 +134,39 @@ export default function SettingsScreen() {
         })}
       </View>
 
+      <Text style={styles.rowLabel}>Persona</Text>
+      <Text style={styles.rowHint}>
+        Named system prompts — applied to chat and Agent Mode. Long-press a
+        custom persona to delete it.
+      </Text>
+      <View style={styles.personaRow}>
+        {personas.map((p) => {
+          const active = settings.systemPrompt === p.prompt
+          return (
+            <Pressable
+              key={p.id}
+              style={[styles.personaChip, active && styles.personaChipActive]}
+              onPress={() => update({ systemPrompt: p.prompt })}
+              onLongPress={() => {
+                if (p.builtIn) return
+                Alert.alert('Delete persona?', p.name, [
+                  { text: 'Cancel', style: 'cancel' },
+                  {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => removeCustomPersona(p.id).then(setPersonas),
+                  },
+                ])
+              }}
+            >
+              <Text style={[styles.personaChipText, active && styles.personaChipTextActive]}>
+                {p.name}
+              </Text>
+            </Pressable>
+          )
+        })}
+      </View>
+
       <Text style={styles.rowLabel}>System prompt</Text>
       <TextInput
         style={styles.systemInput}
@@ -138,6 +176,29 @@ export default function SettingsScreen() {
         placeholder="How should the assistant behave?"
         placeholderTextColor={colors.textFaint}
       />
+      <View style={styles.saveAsRow}>
+        <TextInput
+          style={styles.saveAsInput}
+          value={personaName}
+          onChangeText={setPersonaName}
+          placeholder="Save current prompt as…"
+          placeholderTextColor={colors.textFaint}
+        />
+        <Pressable
+          style={[styles.saveAsBtn, !personaName.trim() && { opacity: 0.4 }]}
+          disabled={!personaName.trim()}
+          onPress={async () => {
+            try {
+              setPersonas(await saveCustomPersona(personaName, settings.systemPrompt))
+              setPersonaName('')
+            } catch (e: any) {
+              Alert.alert('Could not save persona', e?.message ?? '')
+            }
+          }}
+        >
+          <Text style={styles.saveAsBtnText}>Save</Text>
+        </Pressable>
+      </View>
 
       <Pressable style={styles.resetBtn} onPress={() => update(DEFAULT_SETTINGS)}>
         <Text style={styles.resetText}>Reset to defaults</Text>
@@ -317,6 +378,49 @@ const getStyles = themedStyles((colors: Palette) =>
   segmentActive: { backgroundColor: colors.accent, borderColor: colors.accent },
   segmentText: { color: colors.textDim, fontWeight: '600', fontSize: 14 },
   segmentTextActive: { color: colors.accentText },
+  personaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  personaChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  personaChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  personaChipText: { color: colors.textDim, fontSize: 13, fontWeight: '600' },
+  personaChipTextActive: { color: colors.accentText },
+  saveAsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: -spacing.md,
+    marginBottom: spacing.xl,
+  },
+  saveAsInput: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    color: colors.text,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    fontSize: 13,
+  },
+  saveAsBtn: {
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.lg,
+    justifyContent: 'center',
+  },
+  saveAsBtnText: { color: colors.text, fontSize: 13, fontWeight: '600' },
   systemInput: {
     backgroundColor: colors.surface,
     borderWidth: 1,

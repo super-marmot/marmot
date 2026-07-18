@@ -133,6 +133,20 @@ describe('plan integration', () => {
   })
 })
 
+describe('persona injection', () => {
+  it('includes the persona in the system prompt when provided', async () => {
+    const llm = mockLLM(['{"action": "final", "answer": "ok"}'])
+    await runAgentLoop({ llm, task: 't', tools: [], persona: 'Talk like a pirate.' })
+    expect(llm.calls[0][0].content).toContain('Persona (how to speak and act')
+    expect(llm.calls[0][0].content).toContain('Talk like a pirate.')
+  })
+  it('omits the persona line entirely when absent', async () => {
+    const llm = mockLLM(['{"action": "final", "answer": "ok"}'])
+    await runAgentLoop({ llm, task: 't', tools: [] })
+    expect(llm.calls[0][0].content).not.toContain('Persona')
+  })
+})
+
 describe('shouldPlan', () => {
   const { shouldPlan } = require('../planner') as typeof import('../planner')
 
