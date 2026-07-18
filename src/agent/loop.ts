@@ -14,7 +14,7 @@ import { skillsPrompt } from './skills'
 
 export const DEFAULT_POLICIES: AgentPolicies = {
   maxSteps: 6,
-  allowedTools: ['calculator', 'datetime', 'search_chats', 'search_documents'],
+  allowedTools: ['calculator', 'datetime', 'search_chats', 'search_documents', 'web_search', 'fetch_page'],
   maxObservationChars: 2000,
 }
 

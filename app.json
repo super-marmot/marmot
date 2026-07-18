@@ -29,7 +29,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Marmot uses the microphone for voice conversations and meeting transcription — audio never leaves your device.",
+          "speechRecognitionPermission": "Marmot uses on-device speech recognition for voice mode."
+        }
+      ]
     ]
   }
 }

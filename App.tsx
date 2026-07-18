@@ -9,6 +9,7 @@ import ChatScreen from './src/screens/ChatScreen'
 import MemoryScreen from './src/screens/MemoryScreen'
 import ModelsScreen from './src/screens/ModelsScreen'
 import SettingsScreen from './src/screens/SettingsScreen'
+import VoiceScreen from './src/screens/VoiceScreen'
 import { ThemeProvider, useTheme } from './src/ThemeContext'
 import type { RootStackParamList } from './src/navigation'
 
@@ -56,6 +57,7 @@ function AppInner() {
         <Stack.Screen name="Models" component={ModelsScreen} options={{ title: 'Model library' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
         <Stack.Screen name="Memory" component={MemoryScreen} options={{ title: 'Memory' }} />
+        <Stack.Screen name="Voice" component={VoiceScreen} options={{ title: 'Voice' }} />
       </Stack.Navigator>
     </NavigationContainer>
   )

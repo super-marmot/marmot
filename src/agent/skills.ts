@@ -19,6 +19,12 @@ export const DEFAULT_SKILLS: Skill[] = [
       'When the user refers to past conversations, call search_chats with distinctive keywords before answering.',
   },
   {
+    id: 'research',
+    triggers: ['search the web', 'look up', 'latest', 'news', 'research', 'online', 'website', 'current'],
+    procedure:
+      'For current or external information, call web_search first, then fetch_page on the most relevant result, and cite sources by URL. If web tools are unavailable, say so instead of guessing.',
+  },
+  {
     id: 'documents',
     triggers: ['document', 'file', 'notes', 'my doc', 'the pdf', 'imported', 'according to'],
     procedure:

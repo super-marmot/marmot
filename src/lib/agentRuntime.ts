@@ -15,12 +15,14 @@ import {
   makeCancellableLLM,
   makePlan,
   runAgentLoop,
+  fetchPageTool,
   runOrchestratedTask,
   searchChatsTool,
   searchDocumentsTool,
   selectSkills,
   shouldPlan,
   verifyAnswer,
+  webSearchTool,
 } from '../agent'
 
 /**
@@ -56,6 +58,12 @@ const engineEmbedder = {
   },
 }
 
+const httpFetcher = async (url: string): Promise<string> => {
+  const res = await fetch(url, { headers: { 'User-Agent': 'Marmot/1.0 (mobile)' } })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.text()
+}
+
 export const agentMemory = new MemoryStore(AsyncStorage, undefined, engineEmbedder)
 export const agentDocuments = new DocumentStore(AsyncStorage, undefined, engineEmbedder)
 
@@ -72,6 +80,9 @@ export async function runAgentTask(
     datetimeTool(),
     searchChatsTool(loadChats),
     searchDocumentsTool((q) => agentDocuments.retrieve(q)),
+    // web tools exist only when the user has opted in — otherwise the
+    // agent (and the app) is provably offline after model download
+    ...(settings.allowWeb ? [webSearchTool(httpFetcher), fetchPageTool(httpFetcher)] : []),
   ]
   const memoryContext = await agentMemory.contextFor(task)
   const skills = selectSkills(task)

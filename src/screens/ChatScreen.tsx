@@ -425,6 +425,14 @@ export default function ChatScreen() {
       />
 
       <View style={[styles.inputRow, { paddingBottom: spacing.md + insets.bottom }]}>
+        <Pressable
+          style={styles.micBtn}
+          hitSlop={8}
+          disabled={phase !== 'idle'}
+          onPress={() => navigation.navigate('Voice')}
+        >
+          <Text style={styles.micIcon}>🎙</Text>
+        </Pressable>
         <TextInput
           style={styles.input}
           placeholder="Message"
@@ -646,6 +654,17 @@ const getStyles = themedStyles((colors: Palette) =>
     paddingVertical: spacing.md,
     fontSize: 15,
   },
+  micBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  micIcon: { fontSize: 18 },
   sendBtn: {
     backgroundColor: colors.accent,
     borderRadius: radius.pill,

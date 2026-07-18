@@ -39,6 +39,10 @@ actual memory so you know before downloading whether it will run comfortably.
 | :---: | :---: | :---: |
 | <img src="docs/assets/screen-chats.svg" width="220" alt="Conversation list" /> | <img src="docs/assets/screen-chat.svg" width="220" alt="Streaming chat" /> | <img src="docs/assets/screen-agent.svg" width="220" alt="Agent mode with tool-call timeline" /> |
 
+| Voice mode | | |
+| :---: | :---: | :---: |
+| <img src="docs/assets/screen-voice.svg" width="220" alt="Live voice conversation mode" /> | | |
+
 | Model library | Memory | Export | Settings (light) |
 | :---: | :---: | :---: | :---: |
 | <img src="docs/assets/screen-models.svg" width="170" alt="Model library with downloads" /> | <img src="docs/assets/screen-memory.svg" width="170" alt="Agent memory: view, add, delete" /> | <img src="docs/assets/screen-export.svg" width="170" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="170" alt="Settings in light mode with appearance toggle" /> |
@@ -63,6 +67,14 @@ actual memory so you know before downloading whether it will run comfortably.
 - 🎭 **Personas** — five built-in personalities (Concise, Coach, Writer,
   Tutor, Developer) plus save-your-own; the active persona shapes both plain
   chat and the agent's final answers.
+- 🎙️ **Voice mode** — live spoken conversations (listen → think → speak,
+  hands-free loop) and a meeting mode that transcribes the room, saves the
+  transcript into agent-searchable documents, and offers "Marmot, …"
+  wake-phrase contributions as tap-to-speak suggestion cards.
+- 🌐 **Web research (opt-in)** — an "Allow web access" switch gives the agent
+  `web_search` and `fetch_page` tools with cited sources; off means the app
+  is provably offline. Full capability designs (git repos, file organization,
+  whisper-class ASR) live in [docs/CAPABILITIES.md](docs/CAPABILITIES.md).
 - 🌗 **Light & dark mode** — dark by default, with light and follow-system
   options in Settings.
 - 🤖 **Agent Mode** — flip the ⚙ Agent chip and the model works step-by-step

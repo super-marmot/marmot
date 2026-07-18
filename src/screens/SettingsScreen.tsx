@@ -222,6 +222,22 @@ export default function SettingsScreen() {
 
       <View style={styles.switchRow}>
         <View style={{ flex: 1 }}>
+          <Text style={styles.rowLabel}>Allow web access</Text>
+          <Text style={styles.rowHint}>
+            Lets the agent search the web and read pages, citing sources.
+            Off means Marmot is fully offline after model downloads.
+          </Text>
+        </View>
+        <Switch
+          value={settings.allowWeb}
+          onValueChange={(v) => update({ allowWeb: v })}
+          trackColor={{ true: colors.accent, false: colors.surfaceAlt }}
+          thumbColor={colors.surface}
+        />
+      </View>
+
+      <View style={styles.switchRow}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.rowLabel}>GPU acceleration (Android)</Text>
           <Text style={styles.rowHint}>
             Experimental — offloads the model to the GPU (OpenCL, recent

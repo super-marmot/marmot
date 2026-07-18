@@ -54,6 +54,8 @@ export interface InferenceSettings {
   verifyAnswers: boolean
   /** experimental: offload layers to the GPU on Android (OpenCL, Adreno) */
   gpuAndroid: boolean
+  /** let the agent search the web and fetch pages; off = fully offline */
+  allowWeb: boolean
 }
 
 export type DownloadStatus =

@@ -4,4 +4,5 @@ export type RootStackParamList = {
   Models: undefined
   Settings: undefined
   Memory: undefined
+  Voice: undefined
 }
