@@ -58,7 +58,9 @@
 
     <!-- your data -->
     <text x="24" y="546" fill="#0D0D0D" font-size="14" font-weight="600">Your data</text>
-    <rect x="24" y="558" width="272" height="42" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
-    <text x="160" y="584" fill="#0D0D0D" font-size="14" font-weight="600" text-anchor="middle">Export all chats</text>
+    <rect x="24" y="558" width="128" height="42" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="88" y="584" fill="#0D0D0D" font-size="12.5" font-weight="600" text-anchor="middle">Export all chats</text>
+    <rect x="168" y="558" width="128" height="42" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="232" y="584" fill="#0D0D0D" font-size="12.5" font-weight="600" text-anchor="middle">Import chats</text>
   </g>
 </svg>

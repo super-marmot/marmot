@@ -74,9 +74,10 @@ actual memory so you know before downloading whether it will run comfortably.
   summaries of past exchanges. Recall is semantic: memories are matched by
   meaning using on-device embeddings from the loaded model, with keyword
   fallback when no model is running.
-- 📤 **Export & share** — share a chat as Markdown or back up everything as
-  JSON through the native share sheet (Google Drive, OneDrive, Files, email —
-  no cloud SDKs, no OAuth, Marmot never holds a credential).
+- 📤 **Export, import & share** — share a chat as Markdown or back up
+  everything as JSON through the native share sheet (Google Drive, OneDrive,
+  Files, email — no cloud SDKs, no OAuth, Marmot never holds a credential),
+  and restore backups with a merge that never overwrites newer local chats.
 - 🪶 **Lightweight** — ~2 MB JS bundle, no backend, one model in memory at a
   time (switching models releases the previous context first).
 
@@ -169,7 +170,7 @@ depend on it.
 ## Roadmap
 
 - [ ] Markdown rendering in chat bubbles
-- [ ] Import chats back from a JSON export
+- [x] Import chats back from a JSON export
 - [ ] Import any local `.gguf` from the Files app
 - [ ] Background downloads
 - [ ] Android GPU (OpenCL/Vulkan) inference where supported

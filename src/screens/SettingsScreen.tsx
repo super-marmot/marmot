@@ -11,8 +11,11 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import * as DocumentPicker from 'expo-document-picker'
+import * as FileSystem from 'expo-file-system/legacy'
 import { InferenceSettings } from '../types'
-import { DEFAULT_SETTINGS, loadChats, loadSettings, saveSettings } from '../lib/chatStore'
+import { DEFAULT_SETTINGS, loadChats, loadSettings, saveAllChats, saveSettings } from '../lib/chatStore'
+import { mergeChats, parseChatExport } from '../lib/importParse'
 import type { RootStackParamList } from '../navigation'
 import { shareAllChatsAsJson } from '../lib/exportShare'
 import { Palette, radius, spacing, themedStyles } from '../theme'
@@ -167,24 +170,59 @@ export default function SettingsScreen() {
 
       <Text style={styles.rowLabel}>Your data</Text>
       <Text style={styles.rowHint}>
-        Backs up every conversation as a JSON file via the share sheet — save
-        it to Google Drive, OneDrive, Files, or anywhere else you like.
+        Back up every conversation as a JSON file via the share sheet, or
+        restore a backup — imports never overwrite newer local chats.
       </Text>
-      <Pressable
-        style={styles.exportBtn}
-        onPress={async () => {
-          const chats = await loadChats()
-          if (chats.length === 0) {
-            Alert.alert('Nothing to export', 'You have no chats yet.')
-            return
-          }
-          shareAllChatsAsJson(chats).catch((e) => Alert.alert('Export failed', e.message))
-        }}
-      >
-        <Text style={styles.exportText}>Export all chats</Text>
-      </Pressable>
+      <View style={styles.dataRow}>
+        <Pressable
+          style={[styles.exportBtn, { flex: 1 }]}
+          onPress={async () => {
+            const chats = await loadChats()
+            if (chats.length === 0) {
+              Alert.alert('Nothing to export', 'You have no chats yet.')
+              return
+            }
+            shareAllChatsAsJson(chats).catch((e) => Alert.alert('Export failed', e.message))
+          }}
+        >
+          <Text style={styles.exportText}>Export all chats</Text>
+        </Pressable>
+        <Pressable style={[styles.exportBtn, { flex: 1 }]} onPress={importChats}>
+          <Text style={styles.exportText}>Import chats</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   )
+}
+
+async function importChats() {
+  try {
+    const picked = await DocumentPicker.getDocumentAsync({
+      type: 'application/json',
+      copyToCacheDirectory: true,
+    })
+    if (picked.canceled || !picked.assets?.[0]) return
+    const raw = await FileSystem.readAsStringAsync(picked.assets[0].uri)
+    const imported = parseChatExport(raw)
+    const existing = await loadChats()
+    const { chats, added, updated, skipped } = mergeChats(existing, imported)
+    Alert.alert(
+      'Import chats?',
+      `${added} new, ${updated} updated${skipped ? `, ${skipped} skipped (older than local)` : ''}.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Import',
+          onPress: async () => {
+            await saveAllChats(chats)
+            Alert.alert('Done', `Imported ${added + updated} chat${added + updated === 1 ? '' : 's'}.`)
+          },
+        },
+      ]
+    )
+  } catch (e: any) {
+    Alert.alert('Import failed', e?.message ?? 'Could not read that file.')
+  }
 }
 
 function clamp(v: number, min: number, max: number) {
@@ -291,6 +329,7 @@ const getStyles = themedStyles((colors: Palette) =>
     textAlignVertical: 'top',
     marginBottom: spacing.xl,
   },
+  dataRow: { flexDirection: 'row', gap: spacing.md },
   exportBtn: {
     backgroundColor: colors.surface,
     borderWidth: 1,

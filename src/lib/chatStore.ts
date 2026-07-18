@@ -64,6 +64,11 @@ export function saveChat(chat: Chat): Promise<void> {
   })
 }
 
+/** replace the whole chat list (used by import) — serialized like all writes */
+export function saveAllChats(chats: Chat[]): Promise<void> {
+  return enqueueWrite(() => AsyncStorage.setItem(CHATS_KEY, JSON.stringify(chats)))
+}
+
 export function deleteChat(chatId: string): Promise<void> {
   return enqueueWrite(async () => {
     const chats = await loadChats()
