@@ -1,5 +1,5 @@
 import { KVStore, MemoryEntry, MemoryKind } from './types'
-import { Embedder, cosineSimilarity, roundVector } from './semantic'
+import { Embedder, cosineSimilarity, keywordScore01, roundVector, tokenize } from './semantic'
 
 const MEMORY_KEY = 'marmot.agent.memory.v1'
 
@@ -140,21 +140,6 @@ export class MemoryStore {
     if (hits.length === 0) return ''
     return `Relevant memory:\n${hits.map((h) => `- (${h.kind}) ${h.text}`).join('\n')}`
   }
-}
-
-function keywordScore01(query: string, text: string): number {
-  const words = tokenize(query)
-  if (words.length === 0) return 0
-  const entryWords = new Set(tokenize(text))
-  const overlap = words.reduce((acc, w) => acc + (entryWords.has(w) ? 1 : 0), 0)
-  return overlap / words.length
-}
-
-function tokenize(text: string): string[] {
-  return text
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length > 2)
 }
 
 function defaultId(): string {

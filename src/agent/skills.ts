@@ -19,6 +19,12 @@ export const DEFAULT_SKILLS: Skill[] = [
       'When the user refers to past conversations, call search_chats with distinctive keywords before answering.',
   },
   {
+    id: 'documents',
+    triggers: ['document', 'file', 'notes', 'my doc', 'the pdf', 'imported', 'according to'],
+    procedure:
+      'When the user asks about their documents or notes, call search_documents and ground the answer in the returned passages, citing the document name.',
+  },
+  {
     id: 'writing',
     triggers: ['write', 'draft', 'email', 'letter', 'rewrite', 'summarize', 'summary'],
     procedure:

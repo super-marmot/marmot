@@ -35,13 +35,16 @@
     <text x="40" y="424" fill="#E6EDF3" font-size="12.5">Planning a Banff trip in August</text>
     <text x="40" y="441" fill="#6E7681" font-size="10.5">7/18/2026</text>
     <text x="272" y="430" fill="#F85149" font-size="14" font-weight="700">✕</text>
-    <!-- recent activity -->
-    <text x="24" y="492" fill="#E6EDF3" font-size="15" font-weight="700">Recent activity</text>
-    <text x="24" y="510" fill="#6E7681" font-size="10.5">Auto-captured summaries of past exchanges.</text>
-    <rect x="24" y="520" width="272" height="62" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="541" fill="#E6EDF3" font-size="12">Asked: 18% tip on $84.50 split three ways —</text>
-    <text x="40" y="557" fill="#E6EDF3" font-size="12">Answer: $33.24 per person…</text>
-    <text x="40" y="573" fill="#6E7681" font-size="10.5">7/18/2026</text>
-    <text x="272" y="552" fill="#F85149" font-size="14" font-weight="700">✕</text>
+    <!-- documents (RAG) -->
+    <text x="24" y="492" fill="#E6EDF3" font-size="15" font-weight="700">Documents</text>
+    <text x="264" y="492" fill="#E8A33D" font-size="13" font-weight="600">+ Add</text>
+    <text x="24" y="510" fill="#6E7681" font-size="10.5">Files the agent can search by meaning.</text>
+    <rect x="24" y="520" width="272" height="52" rx="12" fill="#161B22" stroke="#2D333B"/>
+    <text x="40" y="541" fill="#E6EDF3" font-size="12.5">banff-trip-plan.md</text>
+    <text x="40" y="558" fill="#6E7681" font-size="10.5">42 passages · 7/18/2026</text>
+    <text x="272" y="549" fill="#F85149" font-size="14" font-weight="700">✕</text>
+    <!-- recent activity (below fold) -->
+    <text x="24" y="606" fill="#E6EDF3" font-size="15" font-weight="700">Recent activity</text>
+    <text x="24" y="624" fill="#6E7681" font-size="10.5">Auto-captured summaries of past exchanges.</text>
   </g>
 </svg>

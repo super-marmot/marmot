@@ -77,6 +77,9 @@ actual memory so you know before downloading whether it will run comfortably.
   summaries of past exchanges. Recall is semantic: memories are matched by
   meaning using on-device embeddings from the loaded model, with keyword
   fallback when no model is running.
+- 📚 **Document RAG** — import text/markdown files (Settings → Memory →
+  Documents); the agent searches them by meaning with its
+  `search_documents` tool and grounds answers in the retrieved passages.
 - 📤 **Export, import & share** — share a chat as Markdown or back up
   everything as JSON through the native share sheet (Google Drive, OneDrive,
   Files, email — no cloud SDKs, no OAuth, Marmot never holds a credential),
@@ -180,7 +183,7 @@ depend on it.
 - [x] Background downloads
 - [ ] Android GPU (OpenCL/Vulkan) inference where supported
 - [ ] Prompt templates / saved personas
-- [ ] Basic RAG over local documents
+- [x] Basic RAG over local documents
 
 ## Contributing
 

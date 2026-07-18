@@ -1,6 +1,7 @@
 import { Chat, ChatMessage } from '../types'
 import { ToolDef } from './types'
 import { evaluate } from './calculator'
+import { DocHit } from './documents'
 
 /**
  * Built-in on-device tools. Everything runs locally — no network, in line
@@ -63,6 +64,23 @@ export function searchChatsTool(getChats: () => Promise<Chat[]>): ToolDef {
         .slice(0, 5)
         .map((h) => `[${h.title}] ${h.snippet}`)
         .join('\n')
+    },
+  }
+}
+
+export function searchDocumentsTool(retrieve: (query: string) => Promise<DocHit[]>): ToolDef {
+  return {
+    name: 'search_documents',
+    description: 'Search the user’s imported documents by meaning; returns the most relevant passages.',
+    args: { query: 'string — what to look for' },
+    async run(args) {
+      const query = String(args.query ?? '').trim()
+      if (!query) return 'Error: empty query'
+      const hits = await retrieve(query)
+      if (hits.length === 0) return 'No relevant passages found in the imported documents.'
+      return hits
+        .map((h) => `[${h.docName}] ${h.text.replace(/\s+/g, ' ').slice(0, 400)}`)
+        .join('\n---\n')
     },
   }
 }

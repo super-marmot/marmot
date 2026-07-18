@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -8,8 +9,10 @@ import {
   View,
 } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
-import { agentMemory } from '../lib/agentRuntime'
-import { MemoryEntry, MemoryKind } from '../agent'
+import * as DocumentPicker from 'expo-document-picker'
+import * as FileSystem from 'expo-file-system/legacy'
+import { agentDocuments, agentMemory } from '../lib/agentRuntime'
+import { MemoryEntry, MemoryKind, StoredDocument } from '../agent'
 import { Palette, radius, spacing, themedStyles } from '../theme'
 import { useTheme } from '../ThemeContext'
 
@@ -23,12 +26,35 @@ export default function MemoryScreen() {
   const { colors } = useTheme()
   const styles = getStyles(colors)
   const [entries, setEntries] = useState<MemoryEntry[]>([])
+  const [docs, setDocs] = useState<StoredDocument[]>([])
   const [draft, setDraft] = useState('')
   const [draftKind, setDraftKind] = useState<MemoryKind>('user')
+  const [addingDoc, setAddingDoc] = useState(false)
 
   const refresh = useCallback(() => {
     agentMemory.all().then((all) => setEntries(all.sort((a, b) => b.createdAt - a.createdAt)))
+    agentDocuments.documents().then(setDocs)
   }, [])
+
+  const addDocument = async () => {
+    try {
+      const picked = await DocumentPicker.getDocumentAsync({
+        type: ['text/plain', 'text/markdown', 'text/*'],
+        copyToCacheDirectory: true,
+      })
+      if (picked.canceled || !picked.assets?.[0]) return
+      setAddingDoc(true)
+      const asset = picked.assets[0]
+      const text = await FileSystem.readAsStringAsync(asset.uri)
+      const doc = await agentDocuments.addDocument(asset.name ?? 'Untitled', text)
+      refresh()
+      Alert.alert('Document added', `${doc.name} — ${doc.chunkCount} searchable passages.`)
+    } catch (e: any) {
+      Alert.alert('Import failed', e?.message ?? 'Could not read that file.')
+    } finally {
+      setAddingDoc(false)
+    }
+  }
 
   useFocusEffect(refresh)
 
@@ -87,6 +113,40 @@ export default function MemoryScreen() {
           <Text style={styles.addBtnText}>Remember this</Text>
         </Pressable>
       </View>
+
+      {/* documents (RAG) */}
+      <View style={styles.docHeaderRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sectionTitle}>Documents</Text>
+          <Text style={styles.sectionHint}>
+            Text and markdown files the agent can search by meaning
+            (search_documents tool).
+          </Text>
+        </View>
+        <Pressable onPress={addDocument} disabled={addingDoc} hitSlop={8}>
+          <Text style={styles.addDocLink}>{addingDoc ? 'Adding…' : '+ Add'}</Text>
+        </Pressable>
+      </View>
+      {docs.length === 0 && <Text style={styles.emptyText}>No documents yet.</Text>}
+      {docs.map((d) => (
+        <View key={d.id} style={styles.entryRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.entryText}>{d.name}</Text>
+            <Text style={styles.entryDate}>
+              {d.chunkCount} passages · {new Date(d.addedAt).toLocaleDateString()}
+            </Text>
+          </View>
+          <Pressable
+            hitSlop={10}
+            onPress={async () => {
+              await agentDocuments.removeDocument(d.id)
+              refresh()
+            }}
+          >
+            <Text style={styles.deleteX}>✕</Text>
+          </Pressable>
+        </View>
+      ))}
 
       {KINDS.map((kind) => {
         const rows = entries.filter((e) => e.kind === kind.key)
@@ -162,6 +222,8 @@ const getStyles = themedStyles((colors: Palette) =>
       fontWeight: '700',
       marginTop: spacing.lg,
     },
+    docHeaderRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
+    addDocLink: { color: colors.accent, fontSize: 14, fontWeight: '600', paddingBottom: spacing.sm },
     sectionHint: { color: colors.textFaint, fontSize: 12, marginTop: 2, marginBottom: spacing.sm },
     emptyText: { color: colors.textFaint, fontSize: 13, marginBottom: spacing.sm },
     entryRow: {

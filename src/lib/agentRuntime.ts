@@ -5,6 +5,7 @@ import { InferenceSettings } from '../types'
 import {
   AgentLLM,
   AgentStep,
+  DocumentStore,
   MemoryStore,
   OrchestratorResult,
   Plan,
@@ -16,6 +17,7 @@ import {
   runAgentLoop,
   runOrchestratedTask,
   searchChatsTool,
+  searchDocumentsTool,
   selectSkills,
   shouldPlan,
   verifyAnswer,
@@ -55,6 +57,7 @@ const engineEmbedder = {
 }
 
 export const agentMemory = new MemoryStore(AsyncStorage, undefined, engineEmbedder)
+export const agentDocuments = new DocumentStore(AsyncStorage, undefined, engineEmbedder)
 
 export async function runAgentTask(
   task: string,
@@ -64,7 +67,12 @@ export async function runAgentTask(
   onPlan?: (plan: Plan) => void
 ): Promise<OrchestratorResult> {
   const llm = makeCancellableLLM(engineLLM(settings), isCancelled)
-  const tools = [calculatorTool(), datetimeTool(), searchChatsTool(loadChats)]
+  const tools = [
+    calculatorTool(),
+    datetimeTool(),
+    searchChatsTool(loadChats),
+    searchDocumentsTool((q) => agentDocuments.retrieve(q)),
+  ]
   const memoryContext = await agentMemory.contextFor(task)
   const skills = selectSkills(task)
 
