@@ -1,0 +1,208 @@
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
+import { InferenceSettings } from '../types'
+import { DEFAULT_SETTINGS, loadSettings, saveSettings } from '../lib/chatStore'
+import { colors, radius, spacing } from '../theme'
+
+const CONTEXT_OPTIONS = [2048, 4096, 8192]
+
+export default function SettingsScreen() {
+  const [settings, setSettings] = useState<InferenceSettings | null>(null)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pending = useRef<InferenceSettings | null>(null)
+
+  useEffect(() => {
+    loadSettings().then(setSettings)
+    return () => {
+      // flush any debounced change on unmount so nothing is lost
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      if (pending.current) saveSettings(pending.current)
+    }
+  }, [])
+
+  const update = (patch: Partial<InferenceSettings>) => {
+    if (!settings) return
+    const next = { ...settings, ...patch }
+    setSettings(next)
+    // debounce disk writes — typing in the system prompt fires per keystroke
+    pending.current = next
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      pending.current = null
+      saveSettings(next)
+    }, 400)
+  }
+
+  if (!settings) return <View style={styles.container} />
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ padding: spacing.lg }}>
+      <Stepper
+        label="Temperature"
+        hint="Higher = more creative, lower = more focused"
+        value={settings.temperature}
+        display={settings.temperature.toFixed(2)}
+        onChange={(v) => update({ temperature: clamp(round2(v), 0, 2) })}
+        step={0.05}
+      />
+      <Stepper
+        label="Top P"
+        hint="Nucleus sampling cutoff"
+        value={settings.topP}
+        display={settings.topP.toFixed(2)}
+        onChange={(v) => update({ topP: clamp(round2(v), 0.05, 1) })}
+        step={0.05}
+      />
+      <Stepper
+        label="Max response tokens"
+        hint="Longest reply the model may generate"
+        value={settings.maxTokens}
+        display={String(settings.maxTokens)}
+        onChange={(v) => update({ maxTokens: clamp(v, 128, 4096) })}
+        step={128}
+      />
+
+      <Text style={styles.rowLabel}>Context length</Text>
+      <Text style={styles.rowHint}>
+        Larger context remembers longer conversations but uses more memory.
+        Changing this reloads the model.
+      </Text>
+      <View style={styles.segmentRow}>
+        {CONTEXT_OPTIONS.map((n) => {
+          const active = settings.contextLength === n
+          return (
+            <Pressable
+              key={n}
+              style={[styles.segment, active && styles.segmentActive]}
+              onPress={() => update({ contextLength: n })}
+            >
+              <Text style={[styles.segmentText, active && styles.segmentTextActive]}>
+                {n}
+              </Text>
+            </Pressable>
+          )
+        })}
+      </View>
+
+      <Text style={styles.rowLabel}>System prompt</Text>
+      <TextInput
+        style={styles.systemInput}
+        multiline
+        value={settings.systemPrompt}
+        onChangeText={(t) => update({ systemPrompt: t })}
+        placeholder="How should the assistant behave?"
+        placeholderTextColor={colors.textFaint}
+      />
+
+      <Pressable style={styles.resetBtn} onPress={() => update(DEFAULT_SETTINGS)}>
+        <Text style={styles.resetText}>Reset to defaults</Text>
+      </Pressable>
+    </ScrollView>
+  )
+}
+
+function clamp(v: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, v))
+}
+function round2(v: number) {
+  return Math.round(v * 100) / 100
+}
+
+function Stepper({
+  label,
+  hint,
+  value,
+  display,
+  onChange,
+  step,
+}: {
+  label: string
+  hint: string
+  value: number
+  display: string
+  onChange: (v: number) => void
+  step: number
+}) {
+  return (
+    <View style={styles.stepperRow}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.rowLabel}>{label}</Text>
+        <Text style={styles.rowHint}>{hint}</Text>
+      </View>
+      <View style={styles.stepperControls}>
+        <Pressable style={styles.stepBtn} hitSlop={8} onPress={() => onChange(value - step)}>
+          <Text style={styles.stepBtnText}>−</Text>
+        </Pressable>
+        <Text style={styles.stepValue}>{display}</Text>
+        <Pressable style={styles.stepBtn} hitSlop={8} onPress={() => onChange(value + step)}>
+          <Text style={styles.stepBtnText}>+</Text>
+        </Pressable>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.bg },
+  stepperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.xl,
+    gap: spacing.md,
+  },
+  rowLabel: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  rowHint: { color: colors.textFaint, fontSize: 12, marginTop: 2, marginBottom: spacing.sm },
+  stepperControls: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  stepBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepBtnText: { color: colors.text, fontSize: 18, fontWeight: '700' },
+  stepValue: {
+    color: colors.accent,
+    fontSize: 15,
+    fontWeight: '700',
+    minWidth: 52,
+    textAlign: 'center',
+  },
+  segmentRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xl },
+  segment: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+  },
+  segmentActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  segmentText: { color: colors.textDim, fontWeight: '600', fontSize: 14 },
+  segmentTextActive: { color: colors.accentText },
+  systemInput: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    color: colors.text,
+    padding: spacing.lg,
+    minHeight: 100,
+    fontSize: 14,
+    textAlignVertical: 'top',
+    marginBottom: spacing.xl,
+  },
+  resetBtn: { alignItems: 'center', padding: spacing.md, marginBottom: 40 },
+  resetText: { color: colors.red, fontSize: 14, fontWeight: '600' },
+})
