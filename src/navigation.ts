@@ -3,4 +3,5 @@ export type RootStackParamList = {
   Chat: { chatId?: string }
   Models: undefined
   Settings: undefined
+  Memory: undefined
 }

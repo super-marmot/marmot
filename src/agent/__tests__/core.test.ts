@@ -94,6 +94,29 @@ describe('MemoryStore', () => {
     const context = await store.contextFor('llama.cpp')
     expect(context).toContain('Relevant memory:')
   })
+  it('summarizes an exchange deterministically and clips long text', async () => {
+    const { episodicSummary } = await import('../memory')
+    const s = episodicSummary('  what is\n 2+2? ', 'x'.repeat(300))
+    expect(s).toContain('Asked: what is 2+2?')
+    expect(s).toContain('…')
+    expect(s.length).toBeLessThan(260)
+  })
+
+  it('caps episodic entries at EPISODIC_CAP, dropping the oldest', async () => {
+    const { EPISODIC_CAP } = await import('../memory')
+    let id = 0
+    const store = new MemoryStore(memoryKV(), () => `id-${id++}`)
+    await store.add('user', 'keep me forever', 1)
+    for (let i = 0; i < EPISODIC_CAP + 5; i++) {
+      await store.add('episodic', `episode ${i}`, 100 + i)
+    }
+    const episodic = await store.all('episodic')
+    expect(episodic.length).toBe(EPISODIC_CAP)
+    expect(episodic.some((e) => e.text === 'episode 0')).toBe(false) // oldest pruned
+    expect(episodic.some((e) => e.text === `episode ${EPISODIC_CAP + 4}`)).toBe(true)
+    expect((await store.all('user')).length).toBe(1) // other kinds untouched
+  })
+
   it('removes entries and filters by kind', async () => {
     const store = new MemoryStore(memoryKV())
     const e = await store.add('user', 'Likes dark mode')

@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import ChatListScreen from './src/screens/ChatListScreen'
 import ChatScreen from './src/screens/ChatScreen'
+import MemoryScreen from './src/screens/MemoryScreen'
 import ModelsScreen from './src/screens/ModelsScreen'
 import SettingsScreen from './src/screens/SettingsScreen'
 import { ThemeProvider, useTheme } from './src/ThemeContext'
@@ -54,6 +55,7 @@ function AppInner() {
         <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Chat' }} />
         <Stack.Screen name="Models" component={ModelsScreen} options={{ title: 'Model library' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+        <Stack.Screen name="Memory" component={MemoryScreen} options={{ title: 'Memory' }} />
       </Stack.Navigator>
     </NavigationContainer>
   )

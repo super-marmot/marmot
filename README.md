@@ -38,9 +38,9 @@ actual memory so you know before downloading whether it will run comfortably.
 | :---: | :---: | :---: |
 | <img src="docs/assets/screen-chats.svg" width="220" alt="Conversation list" /> | <img src="docs/assets/screen-chat.svg" width="220" alt="Streaming chat" /> | <img src="docs/assets/screen-agent.svg" width="220" alt="Agent mode with tool-call timeline" /> |
 
-| Model library | Export | Settings (light) |
-| :---: | :---: | :---: |
-| <img src="docs/assets/screen-models.svg" width="220" alt="Model library with downloads" /> | <img src="docs/assets/screen-export.svg" width="220" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="220" alt="Settings in light mode with appearance toggle" /> |
+| Model library | Memory | Export | Settings (light) |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/assets/screen-models.svg" width="170" alt="Model library with downloads" /> | <img src="docs/assets/screen-memory.svg" width="170" alt="Agent memory: view, add, delete" /> | <img src="docs/assets/screen-export.svg" width="170" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="170" alt="Settings in light mode with appearance toggle" /> |
 
 ## Features
 
@@ -63,6 +63,9 @@ actual memory so you know before downloading whether it will run comfortably.
   with local tools (calculator, clock, chat search), showing a live
   thought/tool/observation timeline. Policy-bounded, fully on-device, unit-
   tested core ([docs/AGENT.md](docs/AGENT.md)).
+- 🧠 **Memory** — the agent remembers facts about you and your projects
+  (viewable and editable in Settings → Memory) and auto-captures one-line
+  summaries of past exchanges, injecting what's relevant into future runs.
 - 📤 **Export & share** — share a chat as Markdown or back up everything as
   JSON through the native share sheet (Google Drive, OneDrive, Files, email —
   no cloud SDKs, no OAuth, Marmot never holds a credential).

@@ -8,8 +8,11 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { InferenceSettings } from '../types'
 import { DEFAULT_SETTINGS, loadChats, loadSettings, saveSettings } from '../lib/chatStore'
+import type { RootStackParamList } from '../navigation'
 import { shareAllChatsAsJson } from '../lib/exportShare'
 import { Palette, radius, spacing, themedStyles } from '../theme'
 import { ThemeMode, useTheme } from '../ThemeContext'
@@ -17,6 +20,7 @@ import { ThemeMode, useTheme } from '../ThemeContext'
 const CONTEXT_OPTIONS = [2048, 4096, 8192]
 
 export default function SettingsScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { colors, mode, setMode } = useTheme()
   const styles = getStyles(colors)
   const [settings, setSettings] = useState<InferenceSettings | null>(null)
@@ -133,6 +137,15 @@ export default function SettingsScreen() {
 
       <Pressable style={styles.resetBtn} onPress={() => update(DEFAULT_SETTINGS)}>
         <Text style={styles.resetText}>Reset to defaults</Text>
+      </Pressable>
+
+      <Text style={styles.rowLabel}>Agent memory</Text>
+      <Text style={styles.rowHint}>
+        What the agent remembers about you and your projects — view, add, or
+        delete entries.
+      </Text>
+      <Pressable style={styles.exportBtn} onPress={() => navigation.navigate('Memory')}>
+        <Text style={styles.exportText}>Manage memory</Text>
       </Pressable>
 
       <Text style={styles.rowLabel}>Your data</Text>

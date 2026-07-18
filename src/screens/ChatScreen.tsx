@@ -27,8 +27,8 @@ import {
 import { engine } from '../lib/engine'
 import { downloads } from '../lib/downloads'
 import { shareChatAsMarkdown } from '../lib/exportShare'
-import { runAgentTask } from '../lib/agentRuntime'
-import { AgentCancelled, AgentStep } from '../agent'
+import { agentMemory, runAgentTask } from '../lib/agentRuntime'
+import { AgentCancelled, AgentStep, episodicSummary } from '../agent'
 import { CATALOG, getModel } from '../models/catalog'
 import { splitThinking } from '../lib/thinking'
 import { Palette, radius, spacing, themedStyles } from '../theme'
@@ -186,6 +186,7 @@ export default function ChatScreen() {
           updatedAt: Date.now(),
         }
         await persist(working)
+        agentMemory.add('episodic', episodicSummary(text, result.answer)).catch(() => {})
         if (toolCalls === 0) setAgentSteps([]) // nothing interesting to keep
         return
       }
@@ -220,6 +221,7 @@ export default function ChatScreen() {
         updatedAt: Date.now(),
       }
       await persist(working)
+      agentMemory.add('episodic', episodicSummary(text, content)).catch(() => {})
     } catch (e: any) {
       if (e instanceof AgentCancelled) setError('Stopped.')
       else setError(e?.message ?? 'Generation failed')
