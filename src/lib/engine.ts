@@ -13,8 +13,9 @@ type EngineStatus = 'unloaded' | 'loading' | 'ready' | 'generating'
 /**
  * Single global llama.cpp context. Only one model is loaded at a time —
  * phones don't have RAM to spare, so switching models releases the old
- * context first. Load/complete are single-flight: concurrent callers get a
- * "busy" error instead of racing the native context.
+ * context first. Load/complete are single-flight: a new call preempts a
+ * stale in-flight one (e.g. left running by a screen the user navigated
+ * away from) rather than racing the native context or blocking on it.
  */
 export interface EngineLoadOptions {
   /** experimental Android GPU offload (OpenCL); iOS always uses Metal */
@@ -27,6 +28,9 @@ class LlamaEngine {
   private loadedContextLength = 0
   private loadedGpuAndroid = false
   private status: EngineStatus = 'unloaded'
+  // bumped on every complete() call so a stale request's finally block
+  // can never clobber a newer one's status (see preemptStaleGeneration)
+  private generation = 0
 
   getStatus(): EngineStatus {
     return this.status
@@ -34,6 +38,21 @@ class LlamaEngine {
 
   getLoadedModelId(): ModelId | null {
     return this.loadedModelId
+  }
+
+  /**
+   * A screen that navigated away mid-reply (or a new chat started while an
+   * old one was still answering) leaves the engine — a global singleton —
+   * stuck 'generating', which used to surface as "Model is busy" to an
+   * unrelated caller. Kill the stale generation instead of blocking on it.
+   */
+  private async preemptStaleGeneration(): Promise<void> {
+    if (this.status !== 'generating') return
+    await this.stop()
+    const start = Date.now()
+    while (this.status === 'generating' && Date.now() - start < 3000) {
+      await new Promise((resolve) => setTimeout(resolve, 40))
+    }
   }
 
   private async releaseContext(): Promise<void> {
@@ -54,6 +73,7 @@ class LlamaEngine {
     options: EngineLoadOptions = {}
   ): Promise<void> {
     const gpuAndroid = options.gpuAndroid ?? false
+    await this.preemptStaleGeneration()
     if (
       this.context &&
       this.loadedModelId === modelId &&
@@ -101,9 +121,11 @@ class LlamaEngine {
     onToken: (token: string) => void,
     options: { enableThinking?: boolean } = {}
   ): Promise<CompletionResult> {
+    await this.preemptStaleGeneration()
     const ctx = this.context
     if (!ctx) throw new Error('No model loaded')
     if (this.status !== 'ready') throw new Error('Model is busy — try again in a moment')
+    const myGeneration = ++this.generation
     this.status = 'generating'
     try {
       const result = await ctx.completion(
@@ -131,9 +153,11 @@ class LlamaEngine {
         },
       }
     } finally {
-      // only restore 'ready' if our context is still the live one — a
-      // concurrent unload/load must not have its status clobbered
-      if (this.context === ctx) this.status = 'ready'
+      // only restore 'ready' if our context is still the live one and no
+      // newer call has taken over — otherwise a stale call's finally
+      // (settling after preemptStaleGeneration killed it) could clobber
+      // the status a newer, still-running generation just set
+      if (this.context === ctx && this.generation === myGeneration) this.status = 'ready'
     }
   }
 

@@ -71,6 +71,28 @@ export default function ChatScreen() {
   const listRef = useRef<FlatList>(null)
   const chatRef = useRef<Chat | null>(null)
   chatRef.current = chat
+  const openChatIdRef = useRef<string | null>(null)
+
+  // React Navigation reuses this screen instance across different chats
+  // (navigate() with a new chatId re-renders rather than remounting), so a
+  // busy 'phase' left over from a chat the user abandoned mid-reply would
+  // otherwise leak in and disable Send/Agent/model chips in the new chat.
+  // Kill the stale generation and unblock the UI the moment the displayed
+  // chat actually changes.
+  useEffect(() => {
+    const id = chat?.id ?? null
+    if (openChatIdRef.current !== null && openChatIdRef.current !== id) {
+      cancelRef.current = true
+      engine.stop().catch(() => {})
+      setPhase('idle')
+      setStreaming('')
+      setAgentSteps([])
+      setAgentPlan(null)
+      planRef.current = null
+      setError(null)
+    }
+    openChatIdRef.current = id
+  }, [chat?.id])
 
   useEffect(() => {
     let cancelled = false
