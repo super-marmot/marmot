@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -25,6 +26,7 @@ import {
   saveChat,
 } from '../lib/chatStore'
 import { engine } from '../lib/engine'
+import { ramFit } from '../lib/deviceMemory'
 import { downloads } from '../lib/downloads'
 import { shareChatAsMarkdown } from '../lib/exportShare'
 import { agentMemory, runAgentTask, verifyAgentAnswer } from '../lib/agentRuntime'
@@ -43,6 +45,19 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 type Route = RouteProp<RootStackParamList, 'Chat'>
 
 const STREAM_FLUSH_MS = 80 // batch token updates so we don't re-render per token
+
+function confirmRiskyLoad(modelName: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    Alert.alert(
+      'This model may be too big',
+      `${modelName} may run very slowly, or the device may run out of memory, given how much RAM is available. Continue anyway?`,
+      [
+        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+        { text: 'Continue', style: 'destructive', onPress: () => resolve(true) },
+      ]
+    )
+  })
+}
 
 export default function ChatScreen() {
   const navigation = useNavigation<Nav>()
@@ -184,6 +199,17 @@ export default function ChatScreen() {
     const current = chatRef.current
     if (!text || !current || !current.modelId || !settings) return
     if (phase !== 'idle') return
+
+    // loading a different model is the expensive, risky step — warn before
+    // committing rather than after the user is stuck watching a spinner.
+    // Confirmed on-device: an oversized model can wedge the native decoder
+    // in swap thrashing badly enough that even Stop stops responding.
+    if (engine.getLoadedModelId() !== current.modelId) {
+      const spec = resolveModel(current.modelId)
+      if (spec && ramFit(spec.sizeBytes) === 'risky' && !(await confirmRiskyLoad(spec.name))) {
+        return
+      }
+    }
 
     setError(null)
     setInput('')
