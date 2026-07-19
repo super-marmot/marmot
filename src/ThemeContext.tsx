@@ -15,15 +15,15 @@ interface ThemeValue {
 }
 
 const ThemeContext = createContext<ThemeValue>({
-  colors: darkColors,
-  mode: 'dark',
-  resolved: 'dark',
+  colors: lightColors,
+  mode: 'light',
+  resolved: 'light',
   setMode: () => {},
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const system = useColorScheme()
-  const [mode, setModeState] = useState<ThemeMode>('dark')
+  const [mode, setModeState] = useState<ThemeMode>('light')
 
   useEffect(() => {
     AsyncStorage.getItem(THEME_KEY).then((saved) => {

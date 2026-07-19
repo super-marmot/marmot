@@ -47,9 +47,9 @@ actual memory so you know before downloading whether it will run comfortably.
 | :---: | :---: | :---: |
 | <img src="docs/assets/screen-voice.svg" width="230" alt="Live voice conversation mode" /> | <img src="docs/assets/screen-ingest.svg" width="230" alt="Share text to Marmot: summarize, translate, proofread" /> | <img src="docs/assets/screen-memory.svg" width="230" alt="Agent memory: view, add, delete" /> |
 
-| Model library | Export | Settings (light) |
+| Model library | Export | Settings |
 | :---: | :---: | :---: |
-| <img src="docs/assets/screen-models.svg" width="230" alt="Model library with downloads" /> | <img src="docs/assets/screen-export.svg" width="230" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="230" alt="Settings in light mode with appearance toggle" /> |
+| <img src="docs/assets/screen-models.svg" width="230" alt="Model library with downloads" /> | <img src="docs/assets/screen-export.svg" width="230" alt="Export a chat to Drive, OneDrive, or Files" /> | <img src="docs/assets/screen-settings.svg" width="230" alt="Settings with appearance, verification, and GPU toggles" /> |
 
 ## Features
 
@@ -62,7 +62,7 @@ actual memory so you know before downloading whether it will run comfortably.
 - 🎭 **Personas** — five built-ins (Concise, Coach, Writer, Tutor, Developer)
   plus save-your-own; the active persona shapes chat and agent answers alike.
 - 🎛️ **Tunable sampling** — temperature, top-p, max tokens, context length,
-  system prompt; 🌗 dark, light, and follow-system themes.
+  system prompt; 🌗 light by default, with dark and follow-system themes.
 
 **Agent**
 
