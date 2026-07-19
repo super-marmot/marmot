@@ -156,7 +156,13 @@ library) and used as a first-class model.
 
 ## Getting started
 
-Marmot uses native modules, so it needs a development build (not Expo Go).
+**Just want the app?** Grab the latest Android APK from
+[Releases](https://github.com/stancsz/marmot/releases) and sideload it
+(built automatically by the Release workflow; iOS requires building from
+source with Xcode for now).
+
+Building from source: Marmot uses native modules, so it needs a development
+build (not Expo Go).
 
 **Prerequisites:** Node 20+, and Android Studio (Android) or Xcode on macOS (iOS).
 
