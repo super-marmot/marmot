@@ -14,6 +14,7 @@ import { Chat } from '../types'
 import { deleteChat, loadChats } from '../lib/chatStore'
 import { shareChatAsJson, shareChatAsMarkdown } from '../lib/exportShare'
 import { loadCustomModels, resolveModel } from '../lib/customModels'
+import { visibleAnswer } from '../lib/thinking'
 import { Palette, radius, spacing, themedStyles } from '../theme'
 import { useTheme } from '../ThemeContext'
 import type { RootStackParamList } from '../navigation'
@@ -94,7 +95,7 @@ export default function ChatListScreen() {
               </Text>
               {last ? (
                 <Text style={styles.cardPreview} numberOfLines={2}>
-                  {last.content.replace(/\s+/g, ' ')}
+                  {visibleAnswer(last.content).replace(/\s+/g, ' ')}
                 </Text>
               ) : null}
               <View style={styles.cardMeta}>

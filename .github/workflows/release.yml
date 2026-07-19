@@ -5,6 +5,10 @@ on:
   push:
     tags: ['v*']
 
+# creating the GitHub Release needs contents:write (default token is read-only)
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
