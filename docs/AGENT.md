@@ -13,7 +13,7 @@ runnable evidence (tests or an on-device screenshot).
 
 | Layer | Marmot implementation | Status | Evidence |
 | --- | --- | --- | --- |
-| System | `SYSTEM.md` execution kernel loaded by `CLAUDE.md`/`AGENTS.md`; in-app personas — named system prompts (5 built-ins + user-saved) applied to chat and injected into the agent loop and orchestrator | ✅ shipped, tested | repo root; Settings screen; `jest`: persona tests |
+| System | `SYSTEM.md` execution kernel loaded by `CLAUDE.md`/`AGENTS.md`; in-app personas — named system prompts (5 built-ins + user-saved) applied to chat and injected into the agent loop and orchestrator | ✅ shipped, tested | `src/`; Settings screen; `jest`: persona tests |
 | Skills | `src/agent/skills.ts` — trigger → procedure registry (math, recall, writing, debugging) injected into the loop prompt | ✅ core, tested | `jest`: selection tests |
 | Loops | `src/agent/loop.ts` — Observe→Decide→Act→Verify state machine with JSON action protocol, malformed-output recovery, honest truncation | ✅ core, tested | `jest`: 5 loop tests |
 | Tools | Local tools (`calculator`, `datetime`, `search_chats`, `search_documents`), opt-in web tools, and **MCP client** (Streamable HTTP) — user-added servers contribute namespaced tools with a dynamically extended policy allowlist | ✅ core, tested | `jest`: tool + policy + MCP tests |

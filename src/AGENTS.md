@@ -4,7 +4,7 @@ Follow [SYSTEM.md](SYSTEM.md) — the execution kernel — for all work in this
 repo: observe before modifying, one intentional change at a time, verify
 before claiming success.
 
-The agent-feature roadmap and its status live in [docs/AGENT.md](docs/AGENT.md).
+The agent-feature roadmap and its status live in [docs/AGENT.md](../docs/AGENT.md).
 Improvement-loop iterations: pick the next unchecked item there, implement,
 test (`npm test`), document, screenshot UI changes, commit.
 
