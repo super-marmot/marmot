@@ -8,8 +8,8 @@
   site, the description names the share-to-action loop, Discussions are
   enabled, and the latest release remains `v0.1.0`.
 - GitHub Pages is served from the canonical repository's `main` branch at
-  `/`; the deployment run `29942861319` completed successfully after Marmot
-  commit `12d813d` was pushed.
+  `/docs`; the Pages build for Marmot commit `df343e5` completed successfully
+  at `2026-07-22T17:41:14Z`.
 
 ## Live checks
 
