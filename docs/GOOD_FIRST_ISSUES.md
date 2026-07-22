@@ -1,10 +1,9 @@
-# Candidate good-first-issue tasks
+# Good-first-issue tasks
 
-This page is a menu of small, real tasks for new contributors. These are
-candidate tasks, not pre-created GitHub tickets. Do not write "I am fixing
-issue #N" for one of these unless that issue actually exists. Open a
-Discussion or a narrowly scoped issue first, then confirm the current files
-and acceptance criteria before starting.
+This page is a menu of small, real tasks for new contributors. Tasks 1–5 have
+seeded GitHub tickets; tasks 6–8 remain candidates until a contributor opens a
+narrowly scoped issue or Discussion. Confirm the current files and acceptance
+criteria before starting, because issue numbers and repository state can move.
 
 ## What makes a good first contribution?
 
@@ -22,7 +21,7 @@ rules in CONTRIBUTING.md:
 
 ## Candidate tasks
 
-### 1. Add one small Share-to-action transform
+### 1. Add one small Share-to-action transform ([issue #2](https://github.com/stancsz/marmot/issues/2))
 
 Start with:
 
@@ -43,7 +42,7 @@ Acceptance:
 - The full Jest suite passes.
 - No network or side effect is introduced.
 
-### 2. Expand action-card approval coverage
+### 2. Expand action-card approval coverage ([issue #3](https://github.com/stancsz/marmot/issues/3))
 
 Start with:
 
@@ -63,7 +62,7 @@ Acceptance:
 - The test makes clear that draft replies are not sent automatically.
 - No permission prompt or phone write runs in the unit test.
 
-### 3. Cover a calendar extraction edge case
+### 3. Cover a calendar extraction edge case ([issue #4](https://github.com/stancsz/marmot/issues/4))
 
 Start with:
 
@@ -81,7 +80,7 @@ Acceptance:
 - Ambiguous input does not become an unapproved calendar event.
 - The focused test and full Jest suite pass.
 
-### 4. Add model-catalog invariant tests
+### 4. Add model-catalog invariant tests ([issue #5](https://github.com/stancsz/marmot/issues/5))
 
 Start with:
 
@@ -101,7 +100,7 @@ Acceptance:
 - The test remains independent of a live Hugging Face download.
 - Existing catalog and multimodal tests continue to pass.
 
-### 5. Submit one reproducible device benchmark
+### 5. Submit one reproducible device benchmark ([issue #6](https://github.com/stancsz/marmot/issues/6))
 
 Start with:
 
@@ -179,9 +178,9 @@ Acceptance:
 
 ## How to propose one
 
-In a new issue or Discussion, name the candidate number, the files you
-inspected, the smallest acceptance criteria, and the checks you plan to run.
-If the task has become larger than one focused PR, split it before coding.
+For tasks without a ticket, open a new issue or Discussion with the candidate
+number, files inspected, smallest acceptance criteria, and checks you plan to
+run. If the task has become larger than one focused PR, split it before coding.
 
 For a code task, the usual local gate is:
 
