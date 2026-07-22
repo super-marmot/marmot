@@ -8,9 +8,12 @@ grounding with a paired vision model/projector shipped in iter-8, the
 deterministic PII eraser shipped in iter-9, the bounded Flight mode MVP
 shipped in iter-10, and canonical public identity/download entry points
 shipped in iter-11.
+
 Do not reopen these closed milestones without a runtime regression or new user
-evidence. Continue with the next explicit release gate: production signing and
-store distribution. In parallel, close the external-app screenshot/message →
-typed action vertical, then add forwardable approved-result cards and the
-device benchmark matrix. PDF/audio decoding, companion milestones, provider
-OAuth, and contributor automation remain separate later milestones.
+evidence. The store-distribution iteration prepared the production pipeline but
+is waiting on external EAS/Play/Apple credentials; finish its internal-track
+and TestFlight install gate when those credentials exist. In parallel, close
+the external-app screenshot/message typed-action vertical, then add forwardable
+approved-result cards and the device benchmark matrix. PDF/audio decoding,
+companion milestones, provider OAuth, and contributor automation remain
+separate later milestones.

@@ -5,6 +5,12 @@
 `multimodal`: screenshots and receipts are the most shareable remaining local
 assistant wedge, but the current catalog is text-only.
 
+## Status
+
+Complete: the paired image model/projector path shipped in iter-8. The
+runtime evidence and remaining PDF/audio boundary are recorded in the ledger
+and release finish line; this WIP file is retained as the design record.
+
 ## Frozen milestone
 
 Package one honest, device-sized vision path end to end:
@@ -25,7 +31,7 @@ Package one honest, device-sized vision path end to end:
 
 ## Runtime gate
 
-The milestone is not shipped until Android evidence shows the paired model and
-projector downloaded, a real local image selected, and a correct answer shown
-in chat. If the emulator cannot complete that path, keep the code/test work as
-progress and record the exact runtime blocker.
+The Android runtime gate passed in iter-8: the paired model and projector were
+downloaded, a real local image was selected, and llama.rn returned a grounded
+answer in chat. PDF/audio decoding and typed vision-to-action extraction are
+separate open milestones.
