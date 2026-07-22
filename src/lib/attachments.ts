@@ -104,17 +104,13 @@ export function buildAttachmentFromCopy(opts: {
   } catch {
     // already exists or readonly — the move below will surface the real error
   }
-  // prefix with a timestamp so two imports of the same name don't collide
+  // Prefix with a timestamp so two imports of the same name don't collide.
+  // Shared provider media must be copied, never moved: a successful move can
+  // remove the user's original photo from the source app.
   const stamped = `${Date.now().toString(36)}-${sanitizeName(validated.name)}`
   const dest = new File(dir, stamped)
   const source = new File(opts.sourceUri)
-  try {
-    source.move(dest)
-  } catch {
-    // copy as a fallback when the source lives outside our sandbox (e.g. a
-    // SAF uri on Android that move() refuses to relocate)
-    source.copy(dest)
-  }
+  source.copy(dest)
   return {
     name: validated.name,
     mimeType: validated.mimeType,

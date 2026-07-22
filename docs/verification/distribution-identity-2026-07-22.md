@@ -7,8 +7,10 @@
 - GitHub metadata was verified after update: the homepage points to the live
   site, the description names the share-to-action loop, Discussions are
   enabled, and the latest release remains `v0.1.0`.
-- The separate Pages repository was synchronized from `marmot/docs/index.html`
-  and pushed to `super-marmot/super-marmot.github.io` at commit `f588a5d`.
+- The separate Pages repository has a pending synchronized `index.html` change
+  in the local checkout; it is not considered published until the selected
+  proof assets are committed to Marmot, pushed, then the Pages commit is pushed
+  and its raw/live URLs are rechecked.
 
 ## Live checks
 
@@ -24,7 +26,7 @@
 
 ## Repository gates
 
-- 30 Jest suites / 179 tests passed.
+- 32 Jest suites / 192 tests passed.
 - TypeScript passed with `npx tsc --noEmit`.
 - Android export passed with `npx expo export --platform android`.
 - All 10 product verifiers and their adequacy audits passed.

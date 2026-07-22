@@ -3,6 +3,8 @@
 Marmot's canonical application identity is:
 
 - GitHub: <https://github.com/stancsz/marmot>
+- Publishing owner: `stancsz`; do not create releases from the older
+  `super-marmot/marmot` parent.
 - Android package: `app.marmot.chat`
 - iOS bundle identifier: `app.marmot.chat`
 - First store-targeted version after the sideload baseline: `0.2.0`
@@ -26,10 +28,13 @@ are configured and a real internal-track/TestFlight install is verified.
    `EXPO_TOKEN`. The `store-release.yml` workflow intentionally fails closed
    when it is absent.
 
-The workflow can then be started manually or by pushing a `store-v*` tag:
+The workflow can then be started manually or by pushing a `store-v*` tag. Tags
+and the default manual input submit to the internal track/TestFlight. Selecting
+the `production` submit profile is an explicit manual promotion and should only
+follow a signed internal install check:
 
 ```powershell
-npx eas-cli@21.0.2 build --platform all --profile production --auto-submit --non-interactive --wait
+npx eas-cli@21.0.2 build --platform all --profile production --auto-submit-with-profile internal --non-interactive --wait
 ```
 
 The Android production profile produces an AAB and uses remote version

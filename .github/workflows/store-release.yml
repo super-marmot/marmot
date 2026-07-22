@@ -2,6 +2,15 @@ name: Store release
 
 on:
   workflow_dispatch:
+    inputs:
+      submit_profile:
+        description: Submit destination; production requires an explicit manual approval.
+        required: true
+        type: choice
+        default: internal
+        options:
+          - internal
+          - production
   push:
     tags: ['store-v*']
 
@@ -13,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      SUBMIT_PROFILE: ${{ inputs.submit_profile || 'internal' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +38,8 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$EXPO_TOKEN" || { echo "Missing EXPO_TOKEN; configure EAS authentication before running a store release" >&2; exit 1; }
+          case "$SUBMIT_PROFILE" in internal|production) ;; *) echo "Invalid submit profile: $SUBMIT_PROFILE" >&2; exit 1 ;; esac
           npx eas-cli@21.0.2 whoami
 
-      - name: Build and submit Android and iOS production builds
-        run: npx eas-cli@21.0.2 build --platform all --profile production --auto-submit --non-interactive --wait
+      - name: Build and submit Android and iOS signed builds
+        run: npx eas-cli@21.0.2 build --platform all --profile production --auto-submit-with-profile "$SUBMIT_PROFILE" --non-interactive --wait

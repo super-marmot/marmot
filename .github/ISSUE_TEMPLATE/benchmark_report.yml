@@ -1,0 +1,100 @@
+name: Device benchmark report
+description: Share a reproducible Marmot model run on a named phone or emulator.
+title: "[Benchmark]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for measured device behavior, not leaderboard summaries.
+        Record enough detail for another contributor to repeat the run. Read
+        docs/MODEL_CATALOG_CONTRIBUTIONS.md before submitting.
+
+  - type: textarea
+    id: device
+    attributes:
+      label: Device
+      description: Include model or AVD, OS/API, RAM, architecture, and acceleration.
+      placeholder: |
+        Device or AVD:
+        Profile:
+        Physical or emulated:
+        Android/iOS version and API:
+        Total RAM:
+        CPU architecture / acceleration:
+    validations:
+      required: true
+
+  - type: textarea
+    id: build
+    attributes:
+      label: Marmot build
+      description: Pin the application state used for the run.
+      placeholder: |
+        Commit SHA:
+        App version:
+        Build type:
+        Model ID and quantization:
+        Projector state:
+        Context length:
+        GPU setting:
+    validations:
+      required: true
+
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Reproduction procedure
+      description: Describe download state, cold or warm state, prompt, and exact steps.
+      placeholder: |
+        1. Start with:
+        2. Download or select:
+        3. Send prompt:
+        4. Observe:
+        Cold or warm run:
+        Airplane mode or Flight Mode:
+    validations:
+      required: true
+
+  - type: textarea
+    id: measurements
+    attributes:
+      label: Measurements
+      description: Report observations, not promises.
+      placeholder: |
+        Download size:
+        Free disk before / after:
+        Load duration:
+        First-token latency:
+        Tokens per second:
+        Predicted tokens:
+        Stop worked:
+        Navigation-away recovery:
+        Peak memory or swap observation:
+        Battery or thermal observation:
+    validations:
+      required: true
+
+  - type: textarea
+    id: result
+    attributes:
+      label: Result and limitations
+      description: Include the exact prompt, a short output observation, failures, and what the run does not prove.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Add reviewed screenshots or relevant log excerpts. Do not attach personal content.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I scrubbed names, messages, documents, notifications, private URLs, tokens, API keys, and unrelated log lines.
+          required: true
+        - label: I recorded the commit and device details needed to reproduce this report.
+          required: true

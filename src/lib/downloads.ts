@@ -100,38 +100,52 @@ class DownloadManager {
   private activeAssets: Record<ModelId, DownloadAsset> = {}
   private listeners = new Set<Listener>()
   private initialized = false
+  private initialization: Promise<void> | null = null
   private cancelling = new Set<ModelId>()
 
   async init(): Promise<void> {
     if (this.initialized) return
-    this.initialized = true
-    try {
-      MODELS_DIR.create({ intermediates: true })
-    } catch {
-      // ignore
-    }
+    if (this.initialization) return this.initialization
 
-    for (const spec of CATALOG) {
-      const assets = getModelAssets(spec)
-      if (assets.every((asset) => asset.file.exists)) {
-        this.states[spec.id] = this.doneState(spec)
-        continue
+    this.initialization = (async () => {
+      try {
+        MODELS_DIR.create({ intermediates: true })
+      } catch {
+        // ignore
       }
 
-      let resumable = false
-      for (const asset of assets) {
-        if (!asset.part.exists) continue
-        const snapshot = await this.loadResumeSnapshot(spec.id)
-        if (!snapshot || snapshot.asset !== asset.kind) {
-          // A .part without matching resume data cannot actually be resumed.
-          try { asset.part.delete() } catch {}
+      for (const spec of CATALOG) {
+        const assets = getModelAssets(spec)
+        if (assets.every((asset) => asset.file.exists)) {
+          this.states[spec.id] = this.doneState(spec)
           continue
         }
-        resumable = true
+
+        let resumable = false
+        for (const asset of assets) {
+          if (!asset.part.exists) continue
+          const snapshot = await this.loadResumeSnapshot(spec.id)
+          if (!snapshot || snapshot.asset !== asset.kind) {
+            // A .part without matching resume data cannot actually be resumed.
+            try { asset.part.delete() } catch {}
+            continue
+          }
+          resumable = true
+        }
+        if (resumable) this.states[spec.id] = this.pausedState(spec)
       }
-      if (resumable) this.states[spec.id] = this.pausedState(spec)
+      this.initialized = true
+      this.emit()
+    })()
+
+    try {
+      await this.initialization
+    } catch (error) {
+      this.initialized = false
+      throw error
+    } finally {
+      this.initialization = null
     }
-    this.emit()
   }
 
   subscribe(fn: Listener): () => void {

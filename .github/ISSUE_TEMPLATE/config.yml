@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a setup or usage question
+    url: https://github.com/stancsz/marmot/discussions
+    about: Use Discussions for setup help, model comparisons, and questions.
+  - name: Propose an idea or design
+    url: https://github.com/stancsz/marmot/discussions
+    about: Get feedback before turning a broad idea into an issue.
+  - name: Read the contributor guide
+    url: https://github.com/stancsz/marmot/blob/main/CONTRIBUTING.md
+    about: Start with the five-minute Windows path and contribution lanes.

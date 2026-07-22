@@ -25,7 +25,7 @@ Android package / iOS bundle: `app.marmot.chat`
 | Store-distribution verifier | PASS |
 | Verifier adequacy audit | PASS |
 | Verifier corpus | 11/11 green |
-| Jest | 30 suites / 179 tests passed |
+| Jest | 32 suites / 192 tests passed |
 | TypeScript | `npx tsc --noEmit` passed |
 | Android Expo export | passed; Metro bundle exported to `dist` |
 | GitHub workflow YAML parse | both workflows parsed; expected jobs present |
@@ -34,9 +34,11 @@ Android package / iOS bundle: `app.marmot.chat`
 
 The signing configurator was also inspected against the generated Gradle file:
 the release build points to `signingConfigs.release`, while the debug variant
-retains `signingConfigs.debug`. A local Gradle signing/build invocation could
-not run because this workstation currently has no `JAVA_HOME` or `java` on
-`PATH`; the GitHub workflow installs Temurin JDK 17 before Gradle.
+retains `signingConfigs.debug`. The local Android runtime evidence used the
+debug development build; no production-signed artifact was produced because
+the protected keystore secrets are not present in this checkout. The GitHub
+workflow installs Temurin JDK 17 before Gradle and fails closed without those
+secrets.
 
 ## External distribution gate
 

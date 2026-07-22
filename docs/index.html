@@ -195,6 +195,7 @@
     <a class="brand" href="#"><img src="assets/logo.svg" alt="" /><span>Marmot</span></a>
     <div class="nav-links">
       <a href="#share">Share to action</a>
+      <a href="#proof">Proof</a>
       <a href="#models">Models</a>
       <a href="https://github.com/stancsz/marmot/blob/main/docs/AGENT.md">Docs</a>
       <a href="https://github.com/stancsz/marmot/releases/latest/download/marmot.apk">Download</a>
@@ -273,6 +274,29 @@
   </div>
 </section>
 
+<section id="proof">
+  <div class="wrap">
+    <div class="sec-kicker" data-reveal>Captured, not promised</div>
+    <h2 data-reveal>Two verified boundaries<br /><em>on the phone.</em></h2>
+    <p class="sec-sub" data-reveal>These are Android runtime captures from the canonical Pixel 7 / Android 35 baseline. Screenshot intake and private local vision processing are verified; the separate text-share path reaches an approved calendar write and undo. Screenshot OCR quality remains an honest open gate.</p>
+    <div class="feat-grid">
+      <div class="feat wide pad-shot" data-reveal>
+        <div class="chip">External share</div>
+        <h3>The moment arrives privately.</h3>
+        <p>Marmot receives the shared image and copies it into its private attachment storage before local processing.</p>
+        <img class="shot" src="verification/flagship-crop-share-clean-2026-07-22.png" alt="Marmot Quick actions showing an image received from an external Android share" />
+      </div>
+      <div class="feat wide pad-shot" data-reveal>
+        <div class="chip">Text share · approve, then act</div>
+        <h3>The phone waits for you.</h3>
+        <p>For shared text, the calendar preview shows the resolved time. The write happens only after approval and exposes an undo path.</p>
+        <img class="shot" src="verification/flagship-calendar-approved-2026-07-22.png" alt="Marmot calendar action card showing an approved event and Undo event" />
+      </div>
+    </div>
+    <p class="sec-sub" data-reveal><a href="https://github.com/stancsz/marmot/blob/main/docs/verification/flagship-share-vertical-2026-07-22.md">Read the runtime log and limitations →</a></p>
+  </div>
+</section>
+
 <section id="features">
   <div class="wrap">
     <div class="sec-kicker" data-reveal>More in Labs</div>
@@ -344,9 +368,9 @@
       </div>
     </div>
     <div class="stat-row" data-reveal>
-      <div><div class="stat-big">119</div><div class="stat-label">unit tests, CI-enforced</div></div>
-      <div><div class="stat-big">9<span style="color:var(--cream)">/9</span></div><div class="stat-label">agent layers shipped</div></div>
-      <div><div class="stat-big">0</div><div class="stat-label">servers involved</div></div>
+      <div><div class="stat-big">192</div><div class="stat-label">unit tests, CI-enforced</div></div>
+      <div><div class="stat-big">8.6</div><div class="stat-label">text tok/s baseline</div></div>
+      <div><div class="stat-big">~40s</div><div class="stat-label">vision baseline on emulator</div></div>
     </div>
   </div>
 </section>
@@ -388,6 +412,8 @@
       <a href="https://github.com/stancsz/marmot">GitHub</a>
       <a href="https://github.com/stancsz/marmot/blob/main/docs/AGENT.md">Agent docs</a>
       <a href="https://github.com/stancsz/marmot/blob/main/docs/CAPABILITIES.md">Capabilities</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/docs/BENCHMARKS.md">Benchmarks</a>
+      <a href="https://github.com/stancsz/marmot/blob/main/CONTRIBUTING.md">Contribute</a>
       <a href="https://github.com/stancsz/marmot/blob/main/LICENSE">MIT License</a>
     </div>
   </div>

@@ -13,28 +13,82 @@
 - The user must still press `Add to calendar`; the existing permission,
   calendar write, and `Undo event` path remains the only phone side effect.
 - Extraction refuses to create a calendar preview when the local answer lacks
-  a clear today/tomorrow time instead of guessing a date.
+  labeled title/date/time fields and a clear explicit date/time instead of
+  guessing from unrelated screen metadata.
 
 ## Local evidence
 
 | Check | Result |
 | --- | --- |
 | Shared-media normalization tests | 3 passed |
-| Phone-action tests | 4 passed, including explicit-time extraction guard |
+| Phone-action tests | 9 passed, including strict OCR field and explicit-time guards |
 | TypeScript | `npx tsc --noEmit` passed |
 | Android prebuild | passed; generated manifest contains `SEND` with `text/*` and `image/*` |
 | Focused source verifier | PASS; the verifier executes the focused behavior test and source checks |
 
-## Runtime boundary
+## Runtime evidence
 
-The external share-to-action flow is **not claimed** as runtime-verified in this
-environment. This workstation currently has no `adb` on `PATH` or discoverable
-Android SDK, and no `JAVA_HOME`/Java runtime for a fresh native build. The
-canonical `marmot` AVD configuration is present (Pixel 7, Android 35,
-`x86_64`, 1536 MB), but it could not be started or driven from this checkout.
+The canonical local target was available for this run and the native
+development build installed successfully:
 
-The remaining runtime gate is a fresh development or signed build on that AVD:
-share an event screenshot from an external Android app, observe Marmot's local
-attachment chip, tap `Extract calendar event`, verify the event preview's
-resolved time, approve `Add to calendar`, then verify `Undo event`. Record the
-screen states and result in this file before closing the flagship gap.
+| Field | Observed value |
+| --- | --- |
+| AVD | `marmot`, Pixel 7 profile |
+| Android | 35, Google APIs, `x86_64` |
+| Memory | 1536 MB configured RAM |
+| App | `app.marmot.chat`, version `0.2.0`, versionCode `2` |
+| Build | `npx expo run:android`; APK installed and launched through Metro |
+
+### External text share: pass
+
+An Android `SEND` intent from outside Marmot delivered `Team sync tomorrow at
+10 AM` into Quick actions. Marmot rendered the `Add to calendar` action, showed
+an editable preview with the resolved `tomorrow · 10:00 AM–11:00 AM` time, and
+did not write before approval. Tapping `Add to calendar` produced `Added to
+calendar`; tapping `Undo event` removed it and produced `Removed from
+calendar`.
+
+Evidence:
+
+- [external text intake](flagship-external-text-full-2026-07-22.png)
+- [calendar preview](flagship-calendar-preview-card-2026-07-22.png)
+- [approved calendar event](flagship-calendar-approved-2026-07-22.png)
+- [undo result](flagship-calendar-undone-2026-07-22.png)
+
+After approval, the result also crossed the share boundary: Marmot opened the
+native Android text share sheet with the resolved event title/date/time,
+optional `Processed privately by Marmot` attribution, and the public install
+and GitHub links. The event was then undone so the emulator calendar was left
+clean.
+
+Evidence:
+
+- [approved result card](flagship-calendar-approved-share-card-2026-07-22.png)
+- [native share sheet with result preview](flagship-approved-share-sheet-2026-07-22.png)
+- [post-share undo result](flagship-calendar-undone-2026-07-22.png)
+
+### External screenshot intake: pass; extraction quality: open
+
+A real Android Photos share (not a synthetic `file://` intent) delivered an
+event-card screenshot to Marmot. The image was copied into Marmot's private
+attachment directory, the chip showed `Ready for vision`, and the local
+SmolVLM 256M model plus paired projector initialized and tokenized the image
+successfully. On the clean rerun, the stricter OCR prompt still produced an
+unparseable answer; the guard showed `Could not read screenshot` and did not
+create an action card. This run therefore does **not** claim screenshot-to-
+calendar completion.
+
+Evidence:
+
+- [clean Photos share intake](flagship-external-screenshot-clean-2026-07-22.png)
+- [tight event-card fixture](flagship-event-card-crop-2026-07-22.png)
+- [crop share intake](flagship-crop-share-clean-2026-07-22.png)
+- [clean extraction guard result](flagship-screenshot-extraction-strict-final-2026-07-22.png)
+
+The vision evaluation took approximately 40–42 seconds on this 1536 MB
+`x86_64` emulator and logged skipped frames while processing the image. This
+is useful evidence for the benchmark matrix and a real-phone performance gate,
+not a product latency promise. The next gate is a better OCR-capable local
+vision path or a larger phone-fit vision model, followed by repeating the real
+Photos share → preview → approval → undo run. The current implementation
+keeps the safe manual-edit path instead of guessing.

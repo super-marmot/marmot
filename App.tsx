@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { DarkTheme, DefaultTheme, NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
+import { DarkTheme, DefaultTheme, NavigationContainer, StackActions, createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import ChatListScreen from './src/screens/ChatListScreen'
@@ -53,10 +53,13 @@ function AppInner() {
       return
     }
     if (navRef.isReady()) {
-      navRef.navigate('Ingest', {
+      // Replacing the route is intentional: navigate() is idempotent when
+      // Quick actions is already focused and can leave the previous payload,
+      // action card, and attachment in place for a new external share.
+      navRef.dispatch(StackActions.replace('Ingest', {
         ...(text ? { text } : {}),
         ...(attachment ? { attachment } : {}),
-      })
+      }))
       resetShareIntent()
     }
   }, [hasShareIntent, navigationReady, shareIntent, resetShareIntent])

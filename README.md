@@ -34,6 +34,13 @@ written or sent until you approve it.
 > share something → understand it locally → propose the next action → approve and execute it on the phone
 
 The canonical repository is [github.com/stancsz/marmot](https://github.com/stancsz/marmot).
+The older `super-marmot/marmot` parent is not a publishing target; releases,
+issues, Discussions, and store metadata are maintained from this repository.
+
+Start with the flagship path: share a screenshot or message, let the local
+model propose a calendar action, review the resolved time, and approve or undo
+the phone-side write. The Android proof run is recorded in
+[the flagship verification log](docs/verification/flagship-share-vertical-2026-07-22.md).
 
 ## What is Marmot?
 
@@ -117,9 +124,10 @@ NEON are considerably faster).
 
 **Everyday**
 
-- ⚡ **Share-to-Marmot** — share text or a page from any app (or paste) and
-  hit one-tap actions: summarize, key points, proofread, translate, change
-  tone, draft a reply, explain, or save into searchable documents.
+- ⚡ **Share-to-Marmot** — share a screenshot, receipt, message, page, or
+  document from any app (or paste) and get one-tap local actions. Calendar
+  previews show the resolved date/time, require approval, and support undo;
+  transforms, drafts, and saves remain visibly reviewable.
 - 🔬 **Deep research** — with web access on, a Research toggle steers the
   agent into multi-angle searches, source fetches, and a cited report.
 - 🔗 **Automation hooks** — `marmot://ask?text=…` deep link for iOS
@@ -177,7 +185,10 @@ library) and used as a first-class model.
 
 **Just want the app?** [Download the latest Android APK](https://github.com/stancsz/marmot/releases/latest/download/marmot.apk)
 and sideload it. Browse [release history](https://github.com/stancsz/marmot/releases)
-for checksums and notes. iOS requires building from source with Xcode for now.
+for checksums and notes. The current public artifact is the sideload baseline;
+Google Play and TestFlight/App Store builds are prepared in
+[the store runbook](docs/STORE_RELEASE.md) but are not claimed shipped until
+credentialed internal installs are verified.
 
 Building from source: Marmot uses native modules, so it needs a development
 build (not Expo Go).
@@ -282,17 +293,12 @@ and quality bar live in [docs/CAPABILITIES.md](docs/CAPABILITIES.md).
 
 ## Contributing
 
-Issues and PRs are welcome. For anything non-trivial, open an issue first so
-we can agree on the approach. To hack on the app:
-
-```bash
-npm install
-npx tsc --noEmit     # typecheck
-npx expo run:android # run on a device/emulator
-```
-
-Please keep the project's constraints in mind: no backend services, no
-analytics, no accounts — Marmot stays local-only by design.
+The [five-minute contributor guide](CONTRIBUTING.md) covers the Windows and
+macOS build path, focused lanes, issue templates, and privacy-safe evidence.
+Use [the benchmark matrix](docs/BENCHMARKS.md) for reproducible device
+reports and [the model-catalog workflow](docs/MODEL_CATALOG_CONTRIBUTIONS.md)
+for new local models. Discussions are for design questions; issues are for
+reproducible bugs and scoped tasks.
 
 ## Acknowledgements
 

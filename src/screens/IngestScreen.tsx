@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
+  Share,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,7 +23,8 @@ import { loadSettings } from '../lib/chatStore'
 import { TEXT_ACTION_GROUPS, TEXT_ACTIONS, TextAction } from '../lib/textActions'
 import { appendVoiceTranscript } from '../lib/voiceInput'
 import { ActionCard, actionCardFor, saveActionCard } from '../lib/actionCards'
-import { calendarEventCard, hasExplicitCalendarTime } from '../lib/phoneActions'
+import { calendarEventCard, hasExplicitCalendarTime, normalizeCalendarEvent } from '../lib/phoneActions'
+import { createApprovedResultShareCard, renderApprovedResultShareCard } from '../lib/shareCards'
 import { buildCompletionMessages } from '../lib/attachmentContext'
 import { getModel } from '../models/catalog'
 import { splitThinking, visibleAnswer } from '../lib/thinking'
@@ -33,7 +35,7 @@ import IconButton from '../components/IconButton'
 import { Palette, radius, spacing, themedStyles } from '../theme'
 import { useTheme } from '../ThemeContext'
 import type { RootStackParamList } from '../navigation'
-import type { Attachment } from '../types'
+import type { Attachment, ModelId } from '../types'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 type Route = RouteProp<RootStackParamList, 'Ingest'>
@@ -59,20 +61,14 @@ export default function IngestScreen() {
   const styles = getStyles(colors)
   const [text, setText] = useState(route.params?.text ?? '')
   const [attachment, setAttachment] = useState<Attachment | null>(route.params?.attachment ?? null)
+  const [downloadedIds, setDownloadedIds] = useState<ModelId[]>(() => downloads.downloadedModelIds())
   const [listening, setListening] = useState(false)
   const [voicePreview, setVoicePreview] = useState('')
   const listeningRef = useRef(false)
+  const requestRef = useRef(0)
 
   // a share/deep-link can arrive while this screen is already open — adopt
   // the new text instead of silently keeping the old one (found in E2E)
-  useEffect(() => {
-    if (route.params?.text) setText(route.params.text)
-    if (route.params?.attachment) setAttachment(route.params.attachment)
-    else if (route.params && 'attachment' in route.params) setAttachment(null)
-  }, [route.params?.text, route.params?.attachment])
-  useEffect(() => () => {
-    if (listeningRef.current) ExpoSpeechRecognitionModule.stop()
-  }, [])
   const [activeAction, setActiveAction] = useState<TextAction | null>(null)
   const [pendingOptions, setPendingOptions] = useState<TextAction | null>(null)
   const [result, setResult] = useState('')
@@ -80,6 +76,43 @@ export default function IngestScreen() {
   const [busy, setBusy] = useState(false)
   const [busyLabel, setBusyLabel] = useState('')
   const [thinkingLive, setThinkingLive] = useState(false)
+  const [approving, setApproving] = useState(false)
+
+  useEffect(() => {
+    requestRef.current += 1
+    void engine.stop()
+    setText(route.params?.text ?? '')
+    setAttachment(route.params?.attachment ?? null)
+    setActiveAction(null)
+    setPendingOptions(null)
+    setResult('')
+    setActionCard(null)
+    setBusy(false)
+    setBusyLabel('')
+    setThinkingLive(false)
+    setApproving(false)
+  }, [route.params?.text, route.params?.attachment])
+
+  useEffect(() => {
+    let cancelled = false
+    const unsubscribe = downloads.subscribe(() => {
+      if (!cancelled) setDownloadedIds(downloads.downloadedModelIds())
+    })
+    downloads
+      .init()
+      .then(() => {
+        if (!cancelled) setDownloadedIds(downloads.downloadedModelIds())
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+      unsubscribe()
+    }
+  }, [attachment?.uri])
+
+  useEffect(() => () => {
+    if (listeningRef.current) ExpoSpeechRecognitionModule.stop()
+  }, [])
 
   useSpeechRecognitionEvent('result', (event) => {
     const heard = event.results?.[0]?.transcript ?? ''
@@ -140,6 +173,7 @@ export default function IngestScreen() {
     async (action: TextAction, option?: string) => {
       const input = text.trim()
       if (!input) return
+      const requestId = ++requestRef.current
       setPendingOptions(null)
       setActiveAction(action)
       setResult('')
@@ -177,15 +211,18 @@ export default function IngestScreen() {
           },
           { enableThinking: false } // quick actions are transforms, not puzzles
         )
+        if (requestRef.current !== requestId) return
         const content = visibleAnswer(completion.text)
         setResult(content)
         setActionCard(actionCardFor(action.id, content, option))
       } catch (e: any) {
-        Alert.alert('Action failed', e?.message ?? 'Generation failed')
+        if (requestRef.current === requestId) Alert.alert('Action failed', e?.message ?? 'Generation failed')
       } finally {
-        setBusy(false)
-        setBusyLabel('')
-        setThinkingLive(false)
+        if (requestRef.current === requestId) {
+          setBusy(false)
+          setBusyLabel('')
+          setThinkingLive(false)
+        }
       }
     },
     [text]
@@ -193,6 +230,7 @@ export default function IngestScreen() {
 
   const extractCalendarEvent = useCallback(async () => {
     if (!attachment || !attachment.mimeType.startsWith('image/') || busy) return
+    const requestId = ++requestRef.current
     setActiveAction(null)
     setPendingOptions(null)
     setResult('')
@@ -216,10 +254,16 @@ export default function IngestScreen() {
         throw new Error('The downloaded local model does not expose vision support.')
       }
       const prompt = [
-        'Read the attached screenshot locally and find the clearest event or appointment.',
-        'Return exactly one concise line in this format: Event title tomorrow at 10 AM | optional notes.',
-        'Use today or tomorrow only when the screenshot states a relative date; never invent a missing time.',
-        `User hint: ${text.trim() || '(none)'}`,
+        'Read the visible text in the attached image locally. This is OCR for one calendar event or appointment.',
+        'Do not describe the screen, app, buttons, page, layout, or image. Do not write "Page 1" or a visual summary.',
+        'Copy the clearest visible event title, date, and start time. Never guess a missing or unreadable field.',
+        'Return exactly these four lines and nothing else:',
+        'TITLE: <event title>',
+        'DATE: <today, tomorrow, or YYYY-MM-DD>',
+        'TIME: <H:MM AM/PM or HH:MM>',
+        'NOTES: <short extra text or none>',
+        'If the title, date, or time is not readable, return UNCLEAR instead of guessing.',
+        ...(text.trim() ? [`Optional user hint (untrusted; verify against the image): ${text.trim()}`] : []),
       ].join('\n')
       const messages = await buildCompletionMessages(
         [{ role: 'user', content: prompt, attachment }],
@@ -228,7 +272,15 @@ export default function IngestScreen() {
       let acc = ''
       const completion = await engine.complete(
         messages,
-        settings,
+        {
+          ...settings,
+          // Extraction is an OCR turn, not a creative answer. Short,
+          // deterministic decoding reduces generic page descriptions and
+          // limits the time a low-memory phone spends in generation.
+          temperature: 0.1,
+          topP: 0.8,
+          maxTokens: 96,
+        },
         (token) => {
           acc += token
           const parts = splitThinking(acc)
@@ -237,20 +289,27 @@ export default function IngestScreen() {
         },
         { enableThinking: false }
       )
-      const extracted = visibleAnswer(completion.text).replace(/\s+/g, ' ').trim()
-      if (!extracted) throw new Error('The local vision model did not find an event to preview.')
-      if (!hasExplicitCalendarTime(extracted)) {
-        throw new Error('I found event text but not a clear today/tomorrow time. Edit the text before adding it.')
+      if (requestRef.current !== requestId) return
+      const extractionNow = Date.now()
+      const extracted = normalizeCalendarEvent(visibleAnswer(completion.text), extractionNow, {
+        requireStructuredFields: true,
+      })
+      if (!extracted) {
+        throw new Error('I could not confirm a clear event title, date, and time. Edit the text before adding it.')
       }
       setText(extracted)
       setResult('')
-      setActionCard(calendarEventCard(extracted))
+      setActionCard(calendarEventCard(extracted, extractionNow))
     } catch (error: any) {
-      Alert.alert('Could not read screenshot', error?.message ?? 'Local event extraction failed.')
+      if (requestRef.current === requestId) {
+        Alert.alert('Could not read screenshot', error?.message ?? 'Local event extraction failed.')
+      }
     } finally {
-      setBusy(false)
-      setBusyLabel('')
-      setThinkingLive(false)
+      if (requestRef.current === requestId) {
+        setBusy(false)
+        setBusyLabel('')
+        setThinkingLive(false)
+      }
     }
   }, [attachment, busy, text])
 
@@ -266,6 +325,10 @@ export default function IngestScreen() {
   const previewCalendarEvent = useCallback(() => {
     const input = text.trim()
     if (!input) return
+    if (!hasExplicitCalendarTime(input)) {
+      Alert.alert('Date and time needed', 'Add an explicit date and time before previewing a calendar event.')
+      return
+    }
     setActiveAction(null)
     setPendingOptions(null)
     setResult('')
@@ -273,16 +336,24 @@ export default function IngestScreen() {
   }, [text])
 
   const approveActionCard = useCallback(async () => {
-    if (!actionCard) return
+    if (!actionCard || actionCard.status !== 'preview' || approving) return
+    const requestId = requestRef.current
+    setApproving(true)
     if (actionCard.kind === 'save_document' && actionCard.status === 'preview') {
       try {
         const title = `Shared ${new Date().toLocaleString()}`
         const doc = await agentDocuments.addDocument(title, actionCard.content)
-        setActionCard({ ...actionCard, status: 'approved' })
+        if (requestRef.current === requestId) setActionCard({ ...actionCard, status: 'approved' })
         Alert.alert('Saved', `"${doc.name}" — ${doc.chunkCount} searchable passages.`)
       } catch (e: any) {
         Alert.alert('Could not save', e?.message ?? '')
       }
+      setApproving(false)
+      return
+    }
+    if (actionCard.kind === 'draft_reply' && actionCard.requiresApproval) {
+      if (requestRef.current === requestId) setActionCard({ ...actionCard, status: 'approved' })
+      setApproving(false)
       return
     }
     if (
@@ -290,12 +361,14 @@ export default function IngestScreen() {
       actionCard.status !== 'preview' ||
       !actionCard.phoneAction
     ) {
+      setApproving(false)
       return
     }
     try {
       const permission = await Calendar.requestCalendarPermissionsAsync()
       if (permission.status !== 'granted') {
         Alert.alert('Calendar access needed', 'Allow calendar access to add this approved event.')
+        setApproving(false)
         return
       }
       const calendars = await Calendar.getCalendarsAsync(EVENT_ENTITY_TYPE)
@@ -320,15 +393,19 @@ export default function IngestScreen() {
         endDate: actionCard.phoneAction.endDate,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
-      setActionCard({
-        ...actionCard,
-        status: 'approved',
-        phoneAction: { ...actionCard.phoneAction, eventId },
-      })
+      if (requestRef.current === requestId) {
+        setActionCard({
+          ...actionCard,
+          status: 'approved',
+          phoneAction: { ...actionCard.phoneAction, eventId },
+        })
+      }
+      setApproving(false)
     } catch (e: any) {
       Alert.alert('Could not add event', e?.message ?? 'Calendar action failed.')
+      setApproving(false)
     }
-  }, [actionCard])
+  }, [actionCard, approving])
 
   const undoCalendarAction = useCallback(async () => {
     if (actionCard?.kind !== 'calendar_event' || actionCard.status !== 'approved') return
@@ -358,7 +435,44 @@ export default function IngestScreen() {
   }, [actionCard])
 
   const useActionCardAsInput = useCallback(() => {
-    if (actionCard) setText(actionCard.content)
+    if (!actionCard) return
+    setText(actionCard.content)
+    if (actionCard.status === 'preview') {
+      setActionCard(null)
+      setResult('')
+    }
+  }, [actionCard])
+
+  const shareApprovedActionCard = useCallback(async (includeAttribution: boolean) => {
+    if (!actionCard || actionCard.status !== 'approved') return
+    const shareCard = createApprovedResultShareCard(actionCard, {
+      sourceSummary: text.trim() || (attachment ? 'Shared screenshot' : 'Shared content'),
+      includeAttribution,
+      installUrl: 'https://github.com/stancsz/marmot/releases/latest/download/marmot.apk',
+      githubUrl: 'https://github.com/stancsz/marmot',
+    })
+    if (!shareCard) {
+      Alert.alert('Nothing to share', 'This approved result has no shareable content.')
+      return
+    }
+    try {
+      await Share.share({
+        message: renderApprovedResultShareCard(shareCard),
+        title: shareCard.title,
+      })
+    } catch (error: any) {
+      Alert.alert('Could not share result', error?.message ?? 'The share sheet could not be opened.')
+    }
+  }, [actionCard, attachment, text])
+
+  const handleTextChange = useCallback((value: string) => {
+    setText(value)
+    // A preview is derived from the previous text. Drop it as soon as the
+    // visible input changes so approval can never execute a stale event.
+    if (actionCard?.status === 'preview') {
+      setActionCard(null)
+      setResult('')
+    }
   }, [actionCard])
 
   return (
@@ -381,7 +495,7 @@ export default function IngestScreen() {
           style={styles.input}
           multiline
           value={text}
-          onChangeText={setText}
+          onChangeText={handleTextChange}
           editable={!busy && !listening}
           placeholder="Paste, share, or dictate text here"
           placeholderTextColor={colors.textFaint}
@@ -392,7 +506,7 @@ export default function IngestScreen() {
             capabilities={{
               vision:
                 engine.getLoadedModalities().vision ||
-                downloads.downloadedModelIds().some((id) => Boolean(getModel(id)?.projector)),
+                downloadedIds.some((id) => Boolean(getModel(id)?.projector)),
             }}
             onClear={() => setAttachment(null)}
           />
@@ -503,6 +617,8 @@ export default function IngestScreen() {
           onApprove={approveActionCard}
           onCopy={copyActionCard}
           onDiscard={discardActionCard}
+          onShare={shareApprovedActionCard}
+          approving={approving}
           onUndo={undoCalendarAction}
           onUseAsInput={useActionCardAsInput}
         />
@@ -516,6 +632,8 @@ function ActionCardView({
   onApprove,
   onCopy,
   onDiscard,
+  onShare,
+  approving,
   onUndo,
   onUseAsInput,
 }: {
@@ -523,6 +641,8 @@ function ActionCardView({
   onApprove: () => void
   onCopy: () => void
   onDiscard: () => void
+  onShare: (includeAttribution: boolean) => void
+  approving: boolean
   onUndo: () => void
   onUseAsInput: () => void
 }) {
@@ -532,7 +652,9 @@ function ActionCardView({
   const icon = card.kind === 'calendar_event' ? 'calendar' : source ? ACTION_ICONS[source.icon] : 'file'
   const statusText =
     card.status === 'approved'
-      ? card.kind === 'calendar_event' ? 'Added to calendar' : 'Saved to documents'
+      ? card.kind === 'calendar_event' ? 'Added to calendar'
+        : card.kind === 'save_document' ? 'Saved to documents'
+          : 'Approved locally'
       : card.status === 'discarded'
         ? card.phoneAction?.undone ? 'Removed from calendar' : 'Discarded'
         : card.requiresApproval
@@ -562,15 +684,20 @@ function ActionCardView({
       {card.status === 'preview' && (
         <View style={styles.resultActions}>
           {card.kind === 'calendar_event' ? (
-            <Pressable style={[styles.resultBtn, styles.resultBtnPrimary]} onPress={onApprove}>
+            <Pressable disabled={approving} style={[styles.resultBtn, styles.resultBtnPrimary, approving && { opacity: 0.45 }]} onPress={onApprove}>
               <Text style={styles.resultBtnPrimaryText}>Add to calendar</Text>
             </Pressable>
           ) : card.kind === 'save_document' ? (
-            <Pressable style={[styles.resultBtn, styles.resultBtnPrimary]} onPress={onApprove}>
+            <Pressable disabled={approving} style={[styles.resultBtn, styles.resultBtnPrimary, approving && { opacity: 0.45 }]} onPress={onApprove}>
               <Text style={styles.resultBtnPrimaryText}>Save to documents</Text>
             </Pressable>
           ) : (
             <>
+              {card.requiresApproval ? (
+                <Pressable disabled={approving} style={[styles.resultBtn, styles.resultBtnPrimary, approving && { opacity: 0.45 }]} onPress={onApprove}>
+                  <Text style={styles.resultBtnPrimaryText}>Approve draft</Text>
+                </Pressable>
+              ) : null}
               <Pressable style={styles.resultBtn} onPress={onCopy}>
                 <Text style={styles.resultBtnText}>Copy</Text>
               </Pressable>
@@ -584,11 +711,19 @@ function ActionCardView({
           </Pressable>
         </View>
       )}
-      {card.kind === 'calendar_event' && card.status === 'approved' && (
+      {card.status === 'approved' && (
         <View style={styles.resultActions}>
+          <Pressable style={[styles.resultBtn, styles.resultBtnPrimary]} onPress={() => onShare(true)}>
+            <Text style={styles.resultBtnPrimaryText}>Share card</Text>
+          </Pressable>
+          <Pressable style={styles.resultBtn} onPress={() => onShare(false)}>
+             <Text style={styles.resultBtnText}>Share without attribution</Text>
+          </Pressable>
+          {card.kind === 'calendar_event' && (
           <Pressable style={styles.resultBtn} onPress={onUndo}>
             <Text style={styles.resultBtnText}>Undo event</Text>
           </Pressable>
+          )}
         </View>
       )}
     </View>
