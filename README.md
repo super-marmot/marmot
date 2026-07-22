@@ -301,7 +301,8 @@ macOS build path, focused lanes, issue templates, and privacy-safe evidence.
 Use [the benchmark matrix](docs/BENCHMARKS.md) for reproducible device
 reports and [the model-catalog workflow](docs/MODEL_CATALOG_CONTRIBUTIONS.md)
 for new local models. Discussions are for design questions; issues are for
-reproducible bugs and scoped tasks.
+reproducible bugs and scoped tasks. Track installs separately from GitHub
+activity in the [distribution ledger](docs/DISTRIBUTION.md).
 
 ## Acknowledgements
 
