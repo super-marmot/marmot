@@ -1,8 +1,8 @@
 /**
  * The first-run proof is intentionally short and deterministic: it exercises
- * the real local model path without requiring a web tool or user data.
+ * the real share-to-action path without requiring a web tool or user data.
  */
-export const LOCAL_DEMO_PROMPT = 'What is the capital of France? Answer in one word.'
+export const LOCAL_DEMO_PROMPT = 'Team sync tomorrow at 10 AM'
 
 export const LOCAL_DEMO_PROOF =
-  'This demo runs on your phone. It does not use a cloud request or web tool.'
+  'Share a message, let Marmot understand it on your phone, then approve the calendar action. No cloud request or web tool.'

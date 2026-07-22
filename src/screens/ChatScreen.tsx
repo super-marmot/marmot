@@ -505,7 +505,7 @@ export default function ChatScreen() {
         ListEmptyComponent={
           phase === 'idle' ? (
             demoRequested ? (
-              <LocalDemoCard onRun={() => send(LOCAL_DEMO_PROMPT)} />
+              <LocalDemoCard onRun={() => navigation.navigate('Ingest', { text: LOCAL_DEMO_PROMPT })} />
             ) : (
               <View style={styles.chatEmpty}>
               <Text style={styles.chatEmptyText}>
@@ -669,7 +669,7 @@ function LocalDemoCard({ onRun }: { onRun: () => void }) {
         <Icon name="check" size={18} tintColor={colors.green} />
         <Text style={styles.localDemoEyebrow}>Local-only demo</Text>
       </View>
-      <Text style={styles.localDemoTitle}>See a real answer from your model</Text>
+      <Text style={styles.localDemoTitle}>Turn a shared message into a phone action</Text>
       <Text style={styles.localDemoPrompt}>{LOCAL_DEMO_PROMPT}</Text>
       <View style={styles.localDemoProof}>
         <Icon name="check" size={15} tintColor={colors.textDim} />
@@ -677,11 +677,11 @@ function LocalDemoCard({ onRun }: { onRun: () => void }) {
       </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Run local demo"
+        accessibilityLabel="Open share-to-action demo"
         style={styles.primaryBtn}
         onPress={onRun}
       >
-        <Text style={styles.primaryBtnText}>Run local demo</Text>
+        <Text style={styles.primaryBtnText}>Open share-to-action demo</Text>
       </Pressable>
     </Animated.View>
   )

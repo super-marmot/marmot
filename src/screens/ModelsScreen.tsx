@@ -26,7 +26,7 @@ import { DownloadState, ModelId, ModelSpec } from '../types'
 import { Palette, radius, spacing, themedStyles } from '../theme'
 import { useTheme } from '../ThemeContext'
 import Icon from '../components/Icon'
-import { LOCAL_DEMO_PROOF } from '../lib/localDemo'
+import { LOCAL_DEMO_PROMPT, LOCAL_DEMO_PROOF } from '../lib/localDemo'
 import type { RootStackParamList } from '../navigation'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -112,14 +112,14 @@ export default function ModelsScreen() {
           recommendation={recommendation}
           state={states[recommendation.model.id]}
           onDownload={() => downloads.start(recommendation.model.id)}
-          onDemo={() => navigation.navigate('Chat', { demo: true })}
+          onDemo={() => navigation.navigate('Ingest', { text: LOCAL_DEMO_PROMPT })}
         />
       )}
 
       {downloaded.length > 0 && !recommendationReady && (
         <OfflineDemoCard
           modelName={downloaded[0].name}
-          onDemo={() => navigation.navigate('Chat', { demo: true })}
+          onDemo={() => navigation.navigate('Ingest', { text: LOCAL_DEMO_PROMPT })}
         />
       )}
 
@@ -207,7 +207,7 @@ function RecommendationCard({
       {status === 'done' ? (
         <>
           <Text style={styles.recommendationStatus}>Ready on this device</Text>
-          <Btn label="Try offline demo" onPress={onDemo} primary accessibilityLabel="Try offline demo" />
+          <Btn label="Try share-to-action demo" onPress={onDemo} primary accessibilityLabel="Try share-to-action demo" />
         </>
       ) : status === 'downloading' ? (
         <Text style={styles.recommendationStatus}>Downloading recommended model</Text>
@@ -227,9 +227,9 @@ function OfflineDemoCard({ modelName, onDemo }: { modelName: string; onDemo: () 
         <Icon name="check" size={18} tintColor={colors.green} />
         <Text style={styles.demoEyebrow}>Local-only demo</Text>
       </View>
-      <Text style={styles.demoTitle}>See {modelName} answer a real question</Text>
+      <Text style={styles.demoTitle}>Turn a shared message into a phone action</Text>
       <Text style={styles.demoText}>{LOCAL_DEMO_PROOF}</Text>
-      <Btn label="Try offline demo" onPress={onDemo} primary accessibilityLabel="Try offline demo" />
+      <Btn label="Try share-to-action demo" onPress={onDemo} primary accessibilityLabel="Try share-to-action demo" />
     </View>
   )
 }

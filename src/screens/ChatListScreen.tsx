@@ -81,19 +81,26 @@ export default function ChatListScreen() {
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xl }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>No chats yet</Text>
+            <Text style={styles.emptyTitle}>Make shared things useful</Text>
             <Text style={styles.emptyText}>
-              Private AI chat that runs entirely on your phone. No account, no
-              cloud, works in airplane mode.
+              Share a screenshot, receipt, message, or document. Marmot
+              understands it locally, proposes a calendar event, reminder,
+              draft reply, or saved note, and waits for your approval.
             </Text>
             <Text style={styles.emptyText}>
-              Grab a model from the library to get started.
+              No account, no cloud, works in airplane mode.
             </Text>
             <Pressable
               style={styles.primaryBtn}
+              onPress={() => navigation.navigate('Ingest')}
+            >
+              <Text style={styles.primaryBtnText}>Try Quick actions</Text>
+            </Pressable>
+            <Pressable
+              style={styles.secondaryBtn}
               onPress={() => navigation.navigate('Models')}
             >
-              <Text style={styles.primaryBtnText}>Browse models</Text>
+              <Text style={styles.secondaryBtnText}>Download a starter model</Text>
             </Pressable>
           </View>
         }
@@ -181,6 +188,14 @@ const getStyles = themedStyles((colors: Palette) =>
       borderRadius: radius.pill,
     },
     primaryBtnText: { color: colors.accentText, fontWeight: '700', fontSize: 16 },
+    secondaryBtn: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: spacing.xl,
+      paddingVertical: spacing.md,
+      borderRadius: radius.pill,
+    },
+    secondaryBtnText: { color: colors.text, fontWeight: '700', fontSize: 16 },
     card: {
       backgroundColor: colors.surface,
       borderRadius: radius.md,

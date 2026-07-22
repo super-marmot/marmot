@@ -48,7 +48,8 @@ export default function WelcomeOverlay({ onDone }: { onDone: () => void }) {
         <Animated.View style={{ opacity: textFade, alignItems: 'center' }}>
           <Text style={styles.wordmark}>Marmot</Text>
           <Text style={styles.greeting}>“{greeting}”</Text>
-          <Text style={styles.sub}>fully on-device</Text>
+          <Text style={styles.sub}>share / understand / approve</Text>
+          <Text style={styles.subDetail}>fully on-device</Text>
         </Animated.View>
       </Pressable>
     </Animated.View>
@@ -93,6 +94,13 @@ const getStyles = themedStyles((colors: Palette) =>
       fontSize: 12,
       marginTop: spacing.lg,
       letterSpacing: 2,
+      textTransform: 'uppercase',
+    },
+    subDetail: {
+      color: colors.textFaint,
+      fontSize: 11,
+      marginTop: spacing.xs,
+      letterSpacing: 1.5,
       textTransform: 'uppercase',
     },
   })
