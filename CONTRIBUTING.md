@@ -80,6 +80,7 @@ These are the same checks that matter for a normal TypeScript/test change:
 ~~~powershell
 npm test -- --runInBand
 npx tsc --noEmit
+npm run test:benchmark
 ~~~
 
 The test script is Jest. The runInBand flag makes failures easier to read and

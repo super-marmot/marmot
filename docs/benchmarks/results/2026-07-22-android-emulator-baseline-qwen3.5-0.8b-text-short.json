@@ -1,0 +1,76 @@
+{
+  "schema_version": "marmot.benchmark.v1",
+  "result_id": "2026-07-22-android-emulator-baseline-qwen3.5-0.8b-text-short-cold",
+  "recorded_at_utc": "2026-07-22T16:07:44.574Z",
+  "app": {
+    "commit": "66bd408",
+    "version": "0.2.0",
+    "build_type": "debug",
+    "native_runtime": "llama.rn CPU-only; n_gpu_layers=0"
+  },
+  "device": {
+    "platform": "android",
+    "tier": "android-emulator-baseline",
+    "tier_override": null,
+    "is_emulator": true,
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "os_version": "15 (Android 35)",
+    "physical_ram_mb": 1536,
+    "cpu_abi": "x86_64",
+    "cpu_model": "Android Emulator ranchu x86_64",
+    "gpu": "CPU-only (n_gpu_layers=0)"
+  },
+  "model": {
+    "id": "qwen3.5-0.8b",
+    "quantization": "Q4_K_M",
+    "model_url": "https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/main/Qwen3.5-0.8B-Q4_K_M.gguf",
+    "projector_url": null,
+    "model_bytes": 532517120,
+    "projector_bytes": null,
+    "model_sha256": "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517",
+    "projector_sha256": null
+  },
+  "workload": {
+    "id": "text-short",
+    "fixture_id": "capital-france-v1",
+    "fixture_sha256": null,
+    "context_length": 2048,
+    "max_response_tokens": 128,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "android_gpu": false,
+    "repetition_index": 1,
+    "timing_method": "ui_poll_400ms_cold"
+  },
+  "measurements": {
+    "first_visible_token_ms": 18368,
+    "generation_tok_s": null,
+    "generated_tokens": null,
+    "peak_app_memory_mb": null,
+    "memory_metric": null,
+    "peak_swap_pss_mb": null,
+    "battery_delta_percent_points": null,
+    "battery_duration_ms": null,
+    "download_wall_ms": null,
+    "downloaded_bytes": null,
+    "storage_delta_bytes": null,
+    "image_eval_wall_ms": null,
+    "skipped_frames": null,
+    "cancel_to_idle_ms": null,
+    "cancel_success": null,
+    "share_to_preview_ms": null
+  },
+  "outcome": {
+    "status": "blocked",
+    "fit_recommendation": "pending",
+    "stop_reason": "single_cold_ui_poll_run",
+    "notes": "First visible answer was Paris after one cold run. This is an emulator boundary record, not a phone benchmark: it lacks the required five-run warm distribution, steady tok/s, download, battery, cancellation, and full memory measurements."
+  },
+  "evidence": [
+    "docs/verification/chat-direct-answer-2026-07-22.md",
+    "docs/verification/benchmark-direct-before-send-2026-07-22.png",
+    "docs/verification/benchmark-direct-first-visible-2026-07-22.png",
+    "docs/verification/benchmark-direct-complete-2026-07-22.png"
+  ]
+}

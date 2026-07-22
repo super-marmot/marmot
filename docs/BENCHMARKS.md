@@ -41,6 +41,12 @@ is deliberately separate from the low/mid/high result rows below.
 | Image understanding on the canonical emulator | **Observed boundary; matrix pending** | The paired vision path returned `Page showing options.` and the verification log shows 58.5 tok/s for the result text. A separate runtime observation was approximately 40–42 seconds for image evaluation and showed skipped frames. | The image fixture hash, exact tap-to-result timing method, first visible token, peak memory, battery impact, and cancellation behavior. The 40–42 second observation is not a promise or a cross-device comparison. |
 | RAM-fit and stop behavior | **Measured/observed boundary** | The emulator’s 0.8B path worked; 2B+ was marked risky on the 3 GB-class runtime. Deliberately forcing oversized 4B-class models produced swap thrashing and no timely first token, which is why the app asks for confirmation. See the [agent verification history](AGENT.md). | Per-model, per-device fit labels from this protocol. Never transfer the emulator outcome to a real Android phone or an iPhone. |
 
+A machine-validated [emulator boundary record](benchmarks/results/2026-07-22-android-emulator-baseline-qwen3.5-0.8b-text-short.json)
+captures the later cold `ui_poll` observation and the verified model hash. It is
+explicitly `blocked`, not a populated phone-matrix cell: warm repetitions,
+steady generation, battery, download, cancellation, and physical-device rows
+remain pending.
+
 ## Benchmark matrix
 
 ### Cohorts
@@ -450,6 +456,8 @@ numbers):
    node scripts/benchmark-validate.mjs
    node scripts/benchmark-validate.mjs docs/benchmarks/results/your-result.json
    ```
+
+   The repository shortcut for the protocol check is `npm run test:benchmark`.
 
 4. In the pull request description, state the exact device row, app commit,
    build type, model/projector hashes, workload settings, number of successful
