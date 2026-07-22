@@ -28,9 +28,13 @@ const requireText = (name, text, label = text) => {
   if (source[name] && !source[name].includes(text)) failures.push(`${name}: missing ${label}`)
 }
 
+const requirePattern = (name, pattern, label) => {
+  if (source[name] && !pattern.test(source[name])) failures.push(`${name}: missing ${label}`)
+}
+
 requireText('config', '"androidIntentFilters": ["text/*", "image/*"]', 'Android text and image share filters')
 requireText('config', '"NSExtensionActivationSupportsImageWithMaxCount": 1', 'iOS image share activation rule')
-requireText('app', 'shareIntent.files', 'external shared file intake')
+requirePattern('app', /shareIntent\?\.files|shareIntent\.files/, 'external shared file intake')
 requireText('app', 'sharedFileToAttachment', 'copy shared media into app storage')
 requireText('app', "attachment:", 'attachment route parameter')
 requireText('media', 'export function sharedFileToAttachment', 'shared-file normalization helper')
