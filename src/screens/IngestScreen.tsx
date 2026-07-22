@@ -204,6 +204,7 @@ export default function IngestScreen() {
           [{ role: 'user', content: action.buildPrompt(input, option) }],
           settings,
           (token) => {
+            if (requestRef.current !== requestId) return
             acc += token
             const parts = splitThinking(acc)
             setThinkingLive(parts.isThinking)
@@ -282,6 +283,7 @@ export default function IngestScreen() {
           maxTokens: 96,
         },
         (token) => {
+          if (requestRef.current !== requestId) return
           acc += token
           const parts = splitThinking(acc)
           setThinkingLive(parts.isThinking)
@@ -358,6 +360,7 @@ export default function IngestScreen() {
           maxTokens: 256,
         },
         (token) => {
+          if (requestRef.current !== requestId) return
           acc += token
           const parts = splitThinking(acc)
           setThinkingLive(parts.isThinking)
@@ -389,6 +392,27 @@ export default function IngestScreen() {
       }
     }
   }, [attachment, busy])
+
+  // Stop any in-flight model-backed quick action (transform, image text
+  // extraction, calendar extraction). We invalidate the request BEFORE
+  // awaiting engine.stop() so late token callbacks fail their request-id
+  // guard and never produce a result or action card. Clear the UI immediately
+  // so a slow native stop cannot leave the user staring at a spinner.
+  const stopBusy = useCallback(async () => {
+    if (!busy) return
+    requestRef.current += 1
+    setThinkingLive(false)
+    setBusy(false)
+    setBusyLabel('')
+    setActiveAction(null)
+    setActionCard(null)
+    setResult('Stopped. Nothing was saved.')
+    try {
+      await engine.stop()
+    } catch {
+      // engine.stop() never throws on the JS side today; swallow defensively
+    }
+  }, [busy])
 
   const previewSaveToDocuments = useCallback(() => {
     const input = text.trim()
@@ -692,6 +716,16 @@ export default function IngestScreen() {
           <Text style={styles.busyText}>
             {thinkingLive ? 'Thinking…' : `${busyLabel || activeAction?.label || 'Working'}…`}
           </Text>
+          <View style={styles.busySpacer} />
+          <IconButton
+            accessibilityLabel="Stop"
+            accessibilityHint="Cancels the current model-backed action"
+            icon="stop"
+            variant="danger"
+            onPress={() => {
+              void stopBusy()
+            }}
+          />
         </View>
       )}
 
@@ -900,6 +934,7 @@ const getStyles = themedStyles((colors: Palette) =>
     optionText: { color: colors.text, fontSize: 13 },
     busyRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.xl },
     busyText: { color: colors.textDim, fontSize: 14 },
+    busySpacer: { flex: 1 },
     resultCard: {
       marginTop: spacing.xl,
       backgroundColor: colors.surface,
