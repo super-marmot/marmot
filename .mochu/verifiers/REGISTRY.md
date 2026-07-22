@@ -10,3 +10,4 @@
 | pii-action-verifier | features | The Quick actions screen provides deterministic local PII redaction with a semantic privacy icon | `node .mochu/verifiers/pii-action/verify.mjs` | iter-9 |
 | flight-mode-verifier | product | Flight mode exposes bounded offline activities with a local-only proof and an explicit stop path | `node .mochu/verifiers/flight-mode/verify.mjs` | iter-10 |
 | distribution-identity-verifier | seo-positioning-copy | Public repo and homepage use one canonical repository, stable release link, and the share-to-action promise | `node .mochu/verifiers/distribution-identity/verify.mjs` | iter-11 |
+| store-distribution-verifier | trust | Production Android signing, AAB release, and EAS Android/iOS submission are configured without hard-coded credentials | `node .mochu/verifiers/store-distribution/verify.mjs` | iter-12 |
