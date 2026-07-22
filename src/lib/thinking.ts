@@ -62,6 +62,21 @@ export function visibleAnswer(text: string): string {
 }
 
 /**
+ * Chat history must never persist a model's private reasoning as if it were
+ * the answer. Ordinary Chat requests ask for direct answers, but a stop,
+ * token cap, or model-specific template can still leave only a reasoning
+ * block behind. Keep that failure legible without exposing the hidden text.
+ */
+export function safeChatAnswer(text: string, stopped = false): string {
+  const parts = splitThinking(text)
+  if (parts.answer) return parts.answer
+  if (parts.thinking.trim()) {
+    return stopped ? 'Stopped before a useful answer.' : 'The model did not return a concise answer.'
+  }
+  return '(empty response)'
+}
+
+/**
  * Heuristic for implicit reasoning streams (no tags emitted yet): Qwen3.5
  * reasoning openers. Conservative — only matches known prefixes so normal
  * answers are never hidden.

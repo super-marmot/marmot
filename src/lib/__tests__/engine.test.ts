@@ -76,6 +76,37 @@ describe('LlamaEngine load configuration', () => {
     expect(initCalls).toHaveLength(2)
     expect(initCalls[1].n_ctx).toBe(8192)
   })
+
+  it('forwards direct-answer mode to llama.rn', async () => {
+    platform.OS = 'android'
+    jest.resetModules()
+    initCalls.length = 0
+    const completionCalls: any[] = []
+    jest.doMock('llama.rn', () => ({
+      initLlama: jest.fn(async (params: any) => {
+        initCalls.push(params)
+        return {
+          completion: jest.fn(async (request: any) => {
+            completionCalls.push(request)
+            return { text: 'Paris.', timings: {} }
+          }),
+          stopCompletion: jest.fn(async () => {}),
+          release: jest.fn(async () => {}),
+          embedding: jest.fn(async () => ({ embedding: [] })),
+        }
+      }),
+    }))
+    /* eslint-disable @typescript-eslint/no-var-requires */
+    const { engine } = require('../engine')
+    await engine.ensureLoaded('m1', 4096)
+    await engine.complete(
+      [{ role: 'user', content: 'What is the capital of France?' }],
+      settings,
+      () => {},
+      { enableThinking: false }
+    )
+    expect(completionCalls[0].enable_thinking).toBe(false)
+  })
 })
 
 const settings: any = {

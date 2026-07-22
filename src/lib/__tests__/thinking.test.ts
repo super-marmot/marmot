@@ -1,4 +1,4 @@
-import { splitThinking, visibleAnswer } from '../thinking'
+import { safeChatAnswer, splitThinking, visibleAnswer } from '../thinking'
 
 describe('splitThinking', () => {
   it('splits explicit <think> blocks (existing behavior)', () => {
@@ -44,5 +44,27 @@ describe('visibleAnswer', () => {
 
   it('passes plain answers through untouched', () => {
     expect(visibleAnswer('  Plain answer.  ')).toBe('Plain answer.')
+  })
+})
+
+describe('safeChatAnswer', () => {
+  it('keeps the visible answer while removing a reasoning block', () => {
+    expect(safeChatAnswer('<think>private reasoning</think>Paris.')).toBe('Paris.')
+  })
+
+  it('does not persist reasoning when a stopped run has no answer', () => {
+    expect(safeChatAnswer('Thinking Process:\n1. Analyze the request', true)).toBe(
+      'Stopped before a useful answer.'
+    )
+  })
+
+  it('does not persist reasoning when a run exhausts its response budget', () => {
+    expect(safeChatAnswer('Thinking Process:\n1. Analyze the request')).toBe(
+      'The model did not return a concise answer.'
+    )
+  })
+
+  it('returns the empty marker for empty completion text', () => {
+    expect(safeChatAnswer('')).toBe('(empty response)')
   })
 })

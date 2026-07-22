@@ -33,7 +33,7 @@ import { agentMemory, runAgentTask, verifyAgentAnswer } from '../lib/agentRuntim
 import { AgentCancelled, AgentStep, Plan, episodicSummary, markDone } from '../agent'
 import { CATALOG, hasVision, totalDownloadBytes } from '../models/catalog'
 import { customModelsCache, loadCustomModels, resolveModel } from '../lib/customModels'
-import { splitThinking } from '../lib/thinking'
+import { safeChatAnswer, splitThinking } from '../lib/thinking'
 import { useKeyboardHeight } from '../lib/useKeyboardHeight'
 import { buildResearchTask } from '../lib/textActions'
 import { pickAttachment } from '../lib/attachments'
@@ -361,13 +361,12 @@ export default function ChatScreen() {
           lastFlush = now
           setStreaming(acc)
         }
-      }, isLocalDemo || hasLocalAttachment ? { enableThinking: false } : undefined)
+      }, { enableThinking: false })
 
-      // never persist raw <think> tags: if the model was stopped mid-
-      // reasoning and produced no answer, fall back to the stripped
-      // reasoning text rather than the tagged raw stream
-      const parts = splitThinking(result.text || acc)
-      const content = parts.answer || parts.thinking.trim() || '(empty response)'
+      // Never persist raw <think> tags or implicit reasoning as if it were an
+      // answer. Direct-answer mode is the default for fast useful Chat turns;
+      // the helper also handles a stop or token cap that leaves only thinking.
+      const content = safeChatAnswer(result.text || acc, cancelRef.current)
       const assistantMsg: ChatMessage = {
         ...newMessage('assistant', content),
         stats: result.stats,
