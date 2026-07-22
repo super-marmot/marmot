@@ -1,0 +1,95 @@
+name: Model catalog contribution
+description: Propose a verified GGUF model or paired projector for Marmot.
+title: "[Model]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read docs/MODEL_CATALOG_CONTRIBUTIONS.md first. A catalog proposal
+        needs exact asset sizes, accurate license information, stable URLs,
+        and honest phone evidence. This form does not create a catalog entry
+        by itself.
+
+  - type: textarea
+    id: identity
+    attributes:
+      label: Model identity
+      description: Provide the source identity and the stable catalog ID you propose.
+      placeholder: |
+        Name:
+        Family / source repository:
+        Stable id:
+        Parameters:
+        Quantization:
+        Modalities:
+        Thinking blocks: yes / no / unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: assets
+    attributes:
+      label: Exact assets
+      description: Include direct URLs, exact decimal byte counts, and the combined total.
+      placeholder: |
+        Model URL:
+        Model content-length (bytes):
+        Projector URL: N/A
+        Projector content-length (bytes): N/A
+        Combined download bytes:
+        Final resolved URL(s):
+        Verification method and date:
+    validations:
+      required: true
+
+  - type: textarea
+    id: license
+    attributes:
+      label: License and intended use
+      description: Name the actual license and link to the source terms. Explain what the model is good for without unsupported claims.
+      placeholder: |
+        License name:
+        License URL or source:
+        Intended use:
+        Known limitations:
+    validations:
+      required: true
+
+  - type: textarea
+    id: benchmark
+    attributes:
+      label: Device evidence
+      description: Summarize one reproducible phone or emulator run. Use the benchmark form for a detailed report.
+      placeholder: |
+        Marmot commit and app version:
+        Device or AVD:
+        Physical or emulated:
+        Android/iOS version and API:
+        Total RAM and architecture:
+        Cold or warm load:
+        Load duration / first token / tok/s:
+        Stop and navigation-away tested:
+        Airplane mode or Flight Mode:
+        Free disk before / after:
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Link or attach reviewed screenshots, logs, or a benchmark report. No private images or secrets.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Contributor checks
+      options:
+        - label: I verified exact file sizes rather than copying rounded MB or GB labels.
+          required: true
+        - label: I checked the license and did not relabel it as Apache 2.0 without source evidence.
+          required: true
+        - label: I removed personal data, secrets, tokens, and unredacted logs from the evidence.
+          required: true
+        - label: I understand that device observations are not universal performance promises.
+          required: true

@@ -4,56 +4,56 @@
   </defs>
   <rect x="2" y="2" width="316" height="656" rx="42" fill="#000000"/>
   <g clip-path="url(#screen6)">
-    <rect x="8" y="8" width="304" height="644" fill="#0D1117"/>
-    <text x="34" y="36" fill="#E6EDF3" font-size="12" font-weight="600">9:41</text>
-    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#8B949E"/>
-    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#8B949E"/>
+    <rect x="8" y="8" width="304" height="644" fill="#FFFFFF"/>
+    <text x="34" y="36" fill="#0D0D0D" font-size="12" font-weight="600">9:41</text>
+    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#5D5D5D"/>
+    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#5D5D5D"/>
     <!-- header -->
-    <text x="24" y="72" fill="#8B949E" font-size="15">‹</text>
-    <text x="98" y="72" fill="#E6EDF3" font-size="17" font-weight="600">Qwen3.5 2B</text>
-    <text x="256" y="72" fill="#8B949E" font-size="13">Share</text>
+    <text x="24" y="72" fill="#5D5D5D" font-size="15">‹</text>
+    <text x="98" y="72" fill="#0D0D0D" font-size="17" font-weight="600">Qwen3.5 2B</text>
+    <text x="256" y="72" fill="#5D5D5D" font-size="13">Share</text>
     <!-- agent toggle + model strip -->
-    <rect x="24" y="88" width="74" height="28" rx="14" fill="#3FB950"/>
-    <text x="36" y="106" fill="#0D1117" font-size="11.5" font-weight="600">⚙ Agent</text>
-    <rect x="106" y="88" width="98" height="28" rx="14" fill="#E8A33D"/>
-    <text x="120" y="106" fill="#0D1117" font-size="11.5" font-weight="600">Qwen3.5 2B</text>
-    <rect x="212" y="88" width="90" height="28" rx="14" fill="#161B22" stroke="#2D333B"/>
-    <text x="226" y="106" fill="#8B949E" font-size="11.5" font-weight="600">SmolLM3 3B</text>
-    <line x1="8" y1="128" x2="312" y2="128" stroke="#2D333B"/>
+    <rect x="24" y="88" width="74" height="28" rx="14" fill="#0E8345"/>
+    <text x="36" y="106" fill="#FFFFFF" font-size="11.5" font-weight="600">⚙ Agent</text>
+    <rect x="106" y="88" width="98" height="28" rx="14" fill="#0D0D0D"/>
+    <text x="120" y="106" fill="#FFFFFF" font-size="11.5" font-weight="600">Qwen3.5 2B</text>
+    <rect x="212" y="88" width="90" height="28" rx="14" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="226" y="106" fill="#5D5D5D" font-size="11.5" font-weight="600">SmolLM3 3B</text>
+    <line x1="8" y1="128" x2="312" y2="128" stroke="#E3E3E3"/>
     <!-- user bubble -->
-    <rect x="72" y="146" width="224" height="64" rx="18" fill="#2F3B4C"/>
-    <text x="88" y="172" fill="#E6EDF3" font-size="13">Work out an 18% tip on $84.50</text>
-    <text x="88" y="192" fill="#E6EDF3" font-size="13">and then split the total 3 ways</text>
+    <rect x="72" y="146" width="224" height="64" rx="18" fill="#F2F2F2"/>
+    <text x="88" y="172" fill="#0D0D0D" font-size="13">Work out an 18% tip on $84.50</text>
+    <text x="88" y="192" fill="#0D0D0D" font-size="13">and then split the total 3 ways</text>
     <!-- plan panel -->
-    <rect x="24" y="226" width="272" height="80" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="248" fill="#8B949E" font-size="10" font-weight="700" letter-spacing="1">PLAN</text>
-    <text x="40" y="270" fill="#3FB950" font-size="13">☑</text>
-    <text x="62" y="270" fill="#6E7681" font-size="13" text-decoration="line-through">Compute the 18% tip</text>
-    <text x="40" y="292" fill="#3FB950" font-size="13">☑</text>
-    <text x="62" y="292" fill="#6E7681" font-size="13" text-decoration="line-through">Split the total three ways</text>
+    <rect x="24" y="226" width="272" height="80" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="248" fill="#5D5D5D" font-size="10" font-weight="700" letter-spacing="1">PLAN</text>
+    <text x="40" y="270" fill="#0E8345" font-size="13">☑</text>
+    <text x="62" y="270" fill="#9A9A9A" font-size="13" text-decoration="line-through">Compute the 18% tip</text>
+    <text x="40" y="292" fill="#0E8345" font-size="13">☑</text>
+    <text x="62" y="292" fill="#9A9A9A" font-size="13" text-decoration="line-through">Split the total three ways</text>
     <!-- agent step timeline: per-step executors -->
-    <text x="32" y="328" fill="#6E7681" font-size="11">▶</text>
-    <text x="52" y="328" fill="#E6EDF3" font-size="11.5" font-weight="600">Compute the 18% tip</text>
-    <text x="34" y="349" fill="#6E7681" font-size="11">🔧</text>
-    <text x="56" y="349" fill="#8B949E" font-size="11.5">calculator {"expression": "84.50*0.18"}</text>
-    <text x="36" y="370" fill="#6E7681" font-size="11">↳</text>
-    <text x="56" y="370" fill="#8B949E" font-size="11.5">15.21</text>
-    <text x="32" y="394" fill="#6E7681" font-size="11">▶</text>
-    <text x="52" y="394" fill="#E6EDF3" font-size="11.5" font-weight="600">Split the total three ways</text>
-    <text x="34" y="415" fill="#6E7681" font-size="11">🔧</text>
-    <text x="56" y="415" fill="#8B949E" font-size="11.5">calculator {"expression": "(84.50+15.21)/3"}</text>
-    <text x="36" y="436" fill="#6E7681" font-size="11">↳</text>
-    <text x="56" y="436" fill="#8B949E" font-size="11.5">33.2366…</text>
+    <text x="32" y="328" fill="#9A9A9A" font-size="11">▶</text>
+    <text x="52" y="328" fill="#0D0D0D" font-size="11.5" font-weight="600">Compute the 18% tip</text>
+    <text x="34" y="349" fill="#9A9A9A" font-size="11">🔧</text>
+    <text x="56" y="349" fill="#5D5D5D" font-size="11.5">calculator {"expression": "84.50*0.18"}</text>
+    <text x="36" y="370" fill="#9A9A9A" font-size="11">↳</text>
+    <text x="56" y="370" fill="#5D5D5D" font-size="11.5">15.21</text>
+    <text x="32" y="394" fill="#9A9A9A" font-size="11">▶</text>
+    <text x="52" y="394" fill="#0D0D0D" font-size="11.5" font-weight="600">Split the total three ways</text>
+    <text x="34" y="415" fill="#9A9A9A" font-size="11">🔧</text>
+    <text x="56" y="415" fill="#5D5D5D" font-size="11.5">calculator {"expression": "(84.50+15.21)/3"}</text>
+    <text x="36" y="436" fill="#9A9A9A" font-size="11">↳</text>
+    <text x="56" y="436" fill="#5D5D5D" font-size="11.5">33.2366…</text>
     <!-- assistant bubble -->
-    <rect x="24" y="452" width="256" height="106" rx="18" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="480" fill="#E6EDF3" font-size="13">The 18% tip is $15.21 (total</text>
-    <text x="40" y="500" fill="#E6EDF3" font-size="13">$99.71) — $33.24 per person.</text>
-    <text x="40" y="524" fill="#3FB950" font-size="10" font-weight="700">✓ verified 9/10 · plan 2/2 · 2 subagents</text>
+    <rect x="24" y="452" width="256" height="106" rx="18" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="480" fill="#0D0D0D" font-size="13">The 18% tip is $15.21 (total</text>
+    <text x="40" y="500" fill="#0D0D0D" font-size="13">$99.71) — $33.24 per person.</text>
+    <text x="40" y="524" fill="#0E8345" font-size="10" font-weight="700">✓ verified 9/10 · plan 2/2 · 2 subagents</text>
     <!-- input bar -->
-    <line x1="8" y1="580" x2="312" y2="580" stroke="#2D333B"/>
-    <rect x="24" y="594" width="196" height="44" rx="18" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="621" fill="#6E7681" font-size="13">Message</text>
-    <rect x="230" y="594" width="66" height="44" rx="22" fill="#E8A33D"/>
-    <text x="245" y="621" fill="#0D1117" font-size="13" font-weight="700">Send</text>
+    <line x1="8" y1="580" x2="312" y2="580" stroke="#E3E3E3"/>
+    <rect x="24" y="594" width="196" height="44" rx="18" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="621" fill="#9A9A9A" font-size="13">Message</text>
+    <rect x="230" y="594" width="66" height="44" rx="22" fill="#0D0D0D"/>
+    <text x="245" y="621" fill="#FFFFFF" font-size="13" font-weight="700">Send</text>
   </g>
 </svg>

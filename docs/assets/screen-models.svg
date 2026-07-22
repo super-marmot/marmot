@@ -4,49 +4,49 @@
   </defs>
   <rect x="2" y="2" width="316" height="656" rx="42" fill="#000000"/>
   <g clip-path="url(#screen3)">
-    <rect x="8" y="8" width="304" height="644" fill="#0D1117"/>
-    <text x="34" y="36" fill="#E6EDF3" font-size="12" font-weight="600">9:41</text>
-    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#8B949E"/>
-    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#8B949E"/>
-    <text x="24" y="72" fill="#8B949E" font-size="15">‹</text>
-    <text x="92" y="72" fill="#E6EDF3" font-size="17" font-weight="600">Model library</text>
-    <text x="24" y="100" fill="#6E7681" font-size="12">8 GB RAM  ·  46.9 GB free</text>
-    <text x="220" y="100" fill="#E8A33D" font-size="12" font-weight="600">Import .gguf</text>
+    <rect x="8" y="8" width="304" height="644" fill="#FFFFFF"/>
+    <text x="34" y="36" fill="#0D0D0D" font-size="12" font-weight="600">9:41</text>
+    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#5D5D5D"/>
+    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#5D5D5D"/>
+    <text x="24" y="72" fill="#5D5D5D" font-size="15">‹</text>
+    <text x="92" y="72" fill="#0D0D0D" font-size="17" font-weight="600">Model library</text>
+    <text x="24" y="100" fill="#9A9A9A" font-size="12">8 GB RAM  ·  46.9 GB free</text>
+    <text x="220" y="100" fill="#0D0D0D" font-size="12" font-weight="600">Import .gguf</text>
     <!-- section: on this device -->
-    <text x="24" y="128" fill="#8B949E" font-size="11" font-weight="700" letter-spacing="1">ON THIS DEVICE</text>
-    <rect x="24" y="140" width="272" height="118" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="166" fill="#E6EDF3" font-size="15" font-weight="700">Qwen3.5 0.8B</text>
-    <rect x="204" y="150" width="80" height="20" rx="10" fill="none" stroke="#3FB950"/>
-    <text x="215" y="164" fill="#3FB950" font-size="10" font-weight="700">Runs great</text>
-    <text x="40" y="184" fill="#8B949E" font-size="10.5">Alibaba Qwen · 0.8B · Q4_K_M · 0.53 GB</text>
-    <text x="40" y="204" fill="#8B949E" font-size="11.5">Instant responses on any phone, 200+</text>
-    <text x="40" y="219" fill="#8B949E" font-size="11.5">languages — the top-rated featherweight.</text>
-    <rect x="40" y="230" width="66" height="26" rx="13" fill="none" stroke="#F85149"/>
-    <text x="56" y="247" fill="#F85149" font-size="11.5" font-weight="600">Delete</text>
+    <text x="24" y="128" fill="#5D5D5D" font-size="11" font-weight="700" letter-spacing="1">ON THIS DEVICE</text>
+    <rect x="24" y="140" width="272" height="118" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="166" fill="#0D0D0D" font-size="15" font-weight="700">Qwen3.5 0.8B</text>
+    <rect x="204" y="150" width="80" height="20" rx="10" fill="none" stroke="#0E8345"/>
+    <text x="215" y="164" fill="#0E8345" font-size="10" font-weight="700">Runs great</text>
+    <text x="40" y="184" fill="#5D5D5D" font-size="10.5">Alibaba Qwen · 0.8B · Q4_K_M · 0.53 GB</text>
+    <text x="40" y="204" fill="#5D5D5D" font-size="11.5">Instant responses on any phone, 200+</text>
+    <text x="40" y="219" fill="#5D5D5D" font-size="11.5">languages — the top-rated featherweight.</text>
+    <rect x="40" y="230" width="66" height="26" rx="13" fill="none" stroke="#D92D20"/>
+    <text x="56" y="247" fill="#D92D20" font-size="11.5" font-weight="600">Delete</text>
     <!-- section: available -->
-    <text x="24" y="290" fill="#8B949E" font-size="11" font-weight="700" letter-spacing="1">AVAILABLE</text>
+    <text x="24" y="290" fill="#5D5D5D" font-size="11" font-weight="700" letter-spacing="1">AVAILABLE</text>
     <!-- downloading card -->
-    <rect x="24" y="302" width="272" height="140" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="328" fill="#E6EDF3" font-size="15" font-weight="700">Qwen3.5 2B</text>
-    <rect x="204" y="312" width="80" height="20" rx="10" fill="none" stroke="#3FB950"/>
-    <text x="215" y="326" fill="#3FB950" font-size="10" font-weight="700">Runs great</text>
-    <text x="40" y="346" fill="#8B949E" font-size="10.5">Alibaba Qwen · 2B · Q4_K_M · 1.28 GB</text>
-    <rect x="40" y="360" width="240" height="6" rx="3" fill="#1F2630"/>
-    <rect x="40" y="360" width="154" height="6" rx="3" fill="#E8A33D"/>
-    <text x="40" y="382" fill="#8B949E" font-size="11">823 MB / 1.28 GB · continues in background</text>
-    <rect x="40" y="396" width="64" height="26" rx="13" fill="#1F2630" stroke="#2D333B"/>
-    <text x="56" y="413" fill="#E6EDF3" font-size="11.5" font-weight="600">Pause</text>
-    <rect x="112" y="396" width="68" height="26" rx="13" fill="none" stroke="#F85149"/>
-    <text x="127" y="413" fill="#F85149" font-size="11.5" font-weight="600">Cancel</text>
+    <rect x="24" y="302" width="272" height="140" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="328" fill="#0D0D0D" font-size="15" font-weight="700">Qwen3.5 2B</text>
+    <rect x="204" y="312" width="80" height="20" rx="10" fill="none" stroke="#0E8345"/>
+    <text x="215" y="326" fill="#0E8345" font-size="10" font-weight="700">Runs great</text>
+    <text x="40" y="346" fill="#5D5D5D" font-size="10.5">Alibaba Qwen · 2B · Q4_K_M · 1.28 GB</text>
+    <rect x="40" y="360" width="240" height="6" rx="3" fill="#F4F4F4"/>
+    <rect x="40" y="360" width="154" height="6" rx="3" fill="#0D0D0D"/>
+    <text x="40" y="382" fill="#5D5D5D" font-size="11">823 MB / 1.28 GB · continues in background</text>
+    <rect x="40" y="396" width="64" height="26" rx="13" fill="#F4F4F4" stroke="#E3E3E3"/>
+    <text x="56" y="413" fill="#0D0D0D" font-size="11.5" font-weight="600">Pause</text>
+    <rect x="112" y="396" width="68" height="26" rx="13" fill="none" stroke="#D92D20"/>
+    <text x="127" y="413" fill="#D92D20" font-size="11.5" font-weight="600">Cancel</text>
     <!-- imported section -->
-    <text x="24" y="472" fill="#8B949E" font-size="11" font-weight="700" letter-spacing="1">IMPORTED</text>
-    <rect x="24" y="482" width="272" height="102" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="508" fill="#E6EDF3" font-size="15" font-weight="700">My Finetune 3B</text>
-    <rect x="204" y="492" width="80" height="20" rx="10" fill="none" stroke="#3FB950"/>
-    <text x="215" y="506" fill="#3FB950" font-size="10" font-weight="700">Runs great</text>
-    <text x="40" y="526" fill="#8B949E" font-size="10.5">Imported · Q4_K_M · 1.92 GB</text>
-    <text x="40" y="545" fill="#8B949E" font-size="11.5">Imported from your files. Runs fully on-device.</text>
-    <rect x="40" y="554" width="66" height="24" rx="12" fill="none" stroke="#F85149"/>
-    <text x="56" y="570" fill="#F85149" font-size="11.5" font-weight="600">Delete</text>
+    <text x="24" y="472" fill="#5D5D5D" font-size="11" font-weight="700" letter-spacing="1">IMPORTED</text>
+    <rect x="24" y="482" width="272" height="102" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="508" fill="#0D0D0D" font-size="15" font-weight="700">My Finetune 3B</text>
+    <rect x="204" y="492" width="80" height="20" rx="10" fill="none" stroke="#0E8345"/>
+    <text x="215" y="506" fill="#0E8345" font-size="10" font-weight="700">Runs great</text>
+    <text x="40" y="526" fill="#5D5D5D" font-size="10.5">Imported · Q4_K_M · 1.92 GB</text>
+    <text x="40" y="545" fill="#5D5D5D" font-size="11.5">Imported from your files. Runs fully on-device.</text>
+    <rect x="40" y="554" width="66" height="24" rx="12" fill="none" stroke="#D92D20"/>
+    <text x="56" y="570" fill="#D92D20" font-size="11.5" font-weight="600">Delete</text>
   </g>
 </svg>

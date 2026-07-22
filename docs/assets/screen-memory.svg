@@ -4,47 +4,51 @@
   </defs>
   <rect x="2" y="2" width="316" height="656" rx="42" fill="#000000"/>
   <g clip-path="url(#screen7)">
-    <rect x="8" y="8" width="304" height="644" fill="#0D1117"/>
-    <text x="34" y="36" fill="#E6EDF3" font-size="12" font-weight="600">9:41</text>
-    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#8B949E"/>
-    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#8B949E"/>
+    <rect x="8" y="8" width="304" height="644" fill="#FFFFFF"/>
+    <text x="34" y="36" fill="#0D0D0D" font-size="12" font-weight="600">9:41</text>
+    <rect x="256" y="26" width="24" height="12" rx="3" fill="none" stroke="#5D5D5D"/>
+    <rect x="258" y="28" width="16" height="8" rx="1.5" fill="#5D5D5D"/>
     <!-- header -->
-    <text x="24" y="74" fill="#8B949E" font-size="15">‹</text>
-    <text x="128" y="74" fill="#E6EDF3" font-size="17" font-weight="600">Memory</text>
-    <text x="24" y="102" fill="#8B949E" font-size="11">Memories are recalled by meaning (semantic embeddings)</text>
-    <text x="24" y="117" fill="#8B949E" font-size="11">and injected into context. Everything stays on-device.</text>
+    <text x="24" y="74" fill="#5D5D5D" font-size="15">‹</text>
+    <text x="128" y="74" fill="#0D0D0D" font-size="17" font-weight="600">Memory</text>
+    <text x="24" y="102" fill="#5D5D5D" font-size="11">Memories are recalled by meaning (semantic embeddings)</text>
+    <text x="24" y="117" fill="#5D5D5D" font-size="11">and injected into context. Everything stays on-device.</text>
     <!-- add card -->
-    <rect x="24" y="130" width="272" height="132" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <rect x="40" y="144" width="82" height="26" rx="13" fill="#E8A33D"/>
-    <text x="53" y="161" fill="#0D1117" font-size="11.5" font-weight="600">About you</text>
-    <rect x="130" y="144" width="72" height="26" rx="13" fill="#1F2630" stroke="#2D333B"/>
-    <text x="144" y="161" fill="#8B949E" font-size="11.5" font-weight="600">Projects</text>
-    <rect x="40" y="180" width="240" height="42" rx="8" fill="#0D1117" stroke="#2D333B"/>
-    <text x="52" y="205" fill="#6E7681" font-size="12">e.g. I prefer answers in bullet points</text>
-    <rect x="40" y="230" width="240" height="24" rx="12" fill="#E8A33D"/>
-    <text x="113" y="246" fill="#0D1117" font-size="11.5" font-weight="700">Remember this</text>
+    <rect x="24" y="130" width="272" height="132" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <rect x="40" y="144" width="82" height="26" rx="13" fill="#0D0D0D"/>
+    <text x="53" y="161" fill="#FFFFFF" font-size="11.5" font-weight="600">About you</text>
+    <rect x="130" y="144" width="72" height="26" rx="13" fill="#F4F4F4" stroke="#E3E3E3"/>
+    <text x="144" y="161" fill="#5D5D5D" font-size="11.5" font-weight="600">Projects</text>
+    <rect x="40" y="180" width="240" height="42" rx="8" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="52" y="205" fill="#9A9A9A" font-size="12">e.g. I prefer answers in bullet points</text>
+    <rect x="40" y="230" width="240" height="24" rx="12" fill="#0D0D0D"/>
+    <text x="113" y="246" fill="#FFFFFF" font-size="11.5" font-weight="700">Remember this</text>
     <!-- about you -->
-    <text x="24" y="292" fill="#E6EDF3" font-size="15" font-weight="700">About you</text>
-    <rect x="24" y="302" width="272" height="52" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="324" fill="#E6EDF3" font-size="12.5">Answers in metric units; I live in Calgary</text>
-    <text x="40" y="341" fill="#6E7681" font-size="10.5">7/18/2026</text>
-    <text x="272" y="330" fill="#F85149" font-size="14" font-weight="700">✕</text>
+    <text x="24" y="292" fill="#0D0D0D" font-size="15" font-weight="700">About you</text>
+    <rect x="24" y="302" width="272" height="52" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="324" fill="#0D0D0D" font-size="12.5">Answers in metric units; I live in Calgary</text>
+    <text x="40" y="341" fill="#9A9A9A" font-size="10.5">7/18/2026</text>
+    <text x="272" y="330" fill="#D92D20" font-size="14" font-weight="700">✕</text>
     <!-- projects -->
-    <text x="24" y="392" fill="#E6EDF3" font-size="15" font-weight="700">Projects</text>
-    <rect x="24" y="402" width="272" height="52" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="424" fill="#E6EDF3" font-size="12.5">Planning a Banff trip in August</text>
-    <text x="40" y="441" fill="#6E7681" font-size="10.5">7/18/2026</text>
-    <text x="272" y="430" fill="#F85149" font-size="14" font-weight="700">✕</text>
+    <text x="24" y="392" fill="#0D0D0D" font-size="15" font-weight="700">Projects</text>
+    <rect x="24" y="402" width="272" height="52" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="424" fill="#0D0D0D" font-size="12.5">Planning a Banff trip in August</text>
+    <text x="40" y="441" fill="#9A9A9A" font-size="10.5">7/18/2026</text>
+    <text x="272" y="430" fill="#D92D20" font-size="14" font-weight="700">✕</text>
     <!-- documents (RAG) -->
-    <text x="24" y="492" fill="#E6EDF3" font-size="15" font-weight="700">Documents</text>
-    <text x="264" y="492" fill="#E8A33D" font-size="13" font-weight="600">+ Add</text>
-    <text x="24" y="510" fill="#6E7681" font-size="10.5">Files the agent can search by meaning.</text>
-    <rect x="24" y="520" width="272" height="52" rx="12" fill="#161B22" stroke="#2D333B"/>
-    <text x="40" y="541" fill="#E6EDF3" font-size="12.5">banff-trip-plan.md</text>
-    <text x="40" y="558" fill="#6E7681" font-size="10.5">42 passages · 7/18/2026</text>
-    <text x="272" y="549" fill="#F85149" font-size="14" font-weight="700">✕</text>
-    <!-- recent activity (below fold) -->
-    <text x="24" y="606" fill="#E6EDF3" font-size="15" font-weight="700">Recent activity</text>
-    <text x="24" y="624" fill="#6E7681" font-size="10.5">Auto-captured summaries of past exchanges.</text>
+    <text x="24" y="490" fill="#0D0D0D" font-size="15" font-weight="700">Documents</text>
+    <text x="264" y="490" fill="#0D0D0D" font-size="13" font-weight="600">+ Add</text>
+    <rect x="24" y="500" width="204" height="30" rx="8" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="36" y="520" fill="#9A9A9A" font-size="11.5">Import a GitHub repo… e.g. vercel/swr</text>
+    <rect x="236" y="500" width="60" height="30" rx="8" fill="#0D0D0D"/>
+    <text x="249" y="520" fill="#FFFFFF" font-size="11.5" font-weight="700">Import</text>
+    <rect x="24" y="540" width="272" height="46" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="559" fill="#0D0D0D" font-size="12.5">repo:stancsz/marmot</text>
+    <text x="40" y="575" fill="#9A9A9A" font-size="10.5">217 passages · 7/18/2026</text>
+    <text x="272" y="566" fill="#D92D20" font-size="14" font-weight="700">✕</text>
+    <rect x="24" y="594" width="272" height="46" rx="12" fill="#FFFFFF" stroke="#E3E3E3"/>
+    <text x="40" y="613" fill="#0D0D0D" font-size="12.5">banff-trip-plan.md</text>
+    <text x="40" y="629" fill="#9A9A9A" font-size="10.5">42 passages · 7/18/2026</text>
+    <text x="272" y="620" fill="#D92D20" font-size="14" font-weight="700">✕</text>
   </g>
 </svg>

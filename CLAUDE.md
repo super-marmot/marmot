@@ -1,2 +1,2 @@
-@SYSTEM.md
-@AGENTS.md
+@src/SYSTEM.md
+@src/AGENTS.md

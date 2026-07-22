@@ -1,0 +1,116 @@
+name: Bug report
+description: Report a reproducible problem in the app or contributor tooling.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues first. For setup questions or early
+        designs, use GitHub Discussions. Do not attach private documents,
+        unredacted logcat, API keys, or personal notifications.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Give a short, concrete description of the failure.
+      placeholder: The model download reaches 100% but the Models screen stays paused.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include app version or commit, device/AVD, OS/API, RAM, and architecture.
+      placeholder: |
+        Marmot commit or version:
+        Device or AVD:
+        Android/iOS version and API level:
+        Total RAM:
+        Physical or emulated:
+        CPU architecture / acceleration:
+    validations:
+      required: true
+
+  - type: textarea
+    id: model
+    attributes:
+      label: Model and runtime state
+      description: Include model ID, quantization, projector if relevant, download state, and settings.
+      placeholder: |
+        Model ID and quantization:
+        Projector downloaded: yes / no / N/A
+        Context length:
+        GPU setting:
+        Airplane mode or Flight Mode:
+        Cold or warm run:
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Number the smallest set of steps that reproduces the issue.
+      placeholder: |
+        1. Open Models.
+        2. Start the Qwen3.5 0.8B download.
+        3. Background the app at 40 percent.
+        4. Return to Marmot.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead, including frequency and whether it is a regression?
+    validations:
+      required: true
+
+  - type: textarea
+    id: performance
+    attributes:
+      label: Inference or performance details
+      description: Include prompt shape, load time, first-token latency, tok/s, stop behavior, or memory pressure when relevant.
+      placeholder: |
+        Prompt:
+        Load duration:
+        First token:
+        Tokens per second:
+        Stop worked: yes / no / N/A
+        Memory, swap, or battery observation:
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Paste only relevant, scrubbed lines and include the approximate reproduction time.
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Sanitized screenshots or recording
+      description: Add evidence for layout, state, or visual regressions. Review every pixel for personal data.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy and triage checks
+      options:
+        - label: I removed personal documents, names, email addresses, phone numbers, notifications, private URLs, tokens, and API keys.
+          required: true
+        - label: I searched existing issues and used Discussions instead if this is primarily a question or early design.
+          required: true
+        - label: I included enough device and model detail for another contributor to reproduce the report.
+          required: true

@@ -2,14 +2,19 @@
   "expo": {
     "name": "Marmot",
     "slug": "marmot",
-    "version": "0.1.0",
+    "scheme": "marmot",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#0D1117",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFFFFF",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.marmot.chat",
+      "buildNumber": "2",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
         "UIFileSharingEnabled": true,
         "LSSupportsOpeningDocumentsInPlace": true
@@ -17,8 +22,9 @@
     },
     "android": {
       "package": "app.marmot.chat",
+      "versionCode": 2,
       "adaptiveIcon": {
-        "backgroundColor": "#0D1117",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -29,7 +35,31 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Marmot adds an event only after you approve its preview."
+        }
+      ],
+      [
+        "expo-share-intent",
+        {
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsText": true,
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
+            "NSExtensionActivationSupportsImageWithMaxCount": 1
+          },
+          "androidIntentFilters": ["text/*", "image/*"]
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Marmot uses the microphone for voice conversations and meeting transcription — audio never leaves your device.",
+          "speechRecognitionPermission": "Marmot uses on-device speech recognition for voice mode."
+        }
+      ]
     ]
   }
 }
